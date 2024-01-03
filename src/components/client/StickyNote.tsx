@@ -1,8 +1,13 @@
+import { useEffect, useRef, useState } from "react";
+import Draggable from 'react-draggable';
+
 const StickyNote = () => {
     return (
-        <div className="sticky__note">
-            <p>Example note</p>
-        </div>
+        <Draggable>
+            <div className="sticky__note" >
+                <p>Example note</p>
+            </div>
+        </Draggable>
     );
 }
  
