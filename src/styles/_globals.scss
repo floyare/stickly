@@ -1,0 +1,19 @@
+$CL_BACKGROUND: #13151a;
+$CL_PRIMARY: #2c2525;
+
+*{
+    padding: 0;
+    margin: 0;
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+}
+
+html, body{
+    height: 100%;
+    background-color: $CL_BACKGROUND;
+}
+
+main{
+    width: 100%;
+    height: 100%;
+}
