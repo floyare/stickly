@@ -9,8 +9,13 @@
 
 .sticky__note{
     background-color: yellow;
-    width: 200px;
-    height: 100px;
+    min-width: 200px;
+    min-height: 100px;
     position: absolute;
-    cursor: grab;
+    .dragger{
+        background-color: red;
+        height: 30px;
+        width: 100%;
+        cursor: grab;
+    }
 }
