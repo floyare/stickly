@@ -1,5 +1,6 @@
 ---
 import "../styles/_globals.scss"
+import { AstroFont } from "astro-font";
 interface Props {
 	title: string;
 }
@@ -15,6 +16,24 @@ const { title } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
+		<AstroFont
+		config={[
+			{
+				name: "Afacad",
+				src: [
+				{
+					style: 'bold',
+					weight: '700',
+					path: 'https://fonts.gstatic.com/s/afacad/v1/6NUK8FKMIQOGaw6wjYT7ZHG_zsBBfvLqagk-80KjZfJ_uw.woff2'
+				},
+				],
+				preload: true,
+				display: "swap",
+				selector: "body",
+				fallback: "sans-serif",
+			},
+			]}
+		/>
 		
 		<title>{title}</title>
 	</head>
