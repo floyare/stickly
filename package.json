@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.3.4",
+    "@astrojs/cloudflare": "^8.0.1",
     "@astrojs/react": "^3.0.9",
     "@types/react": "^18.2.46",
     "@types/react-dom": "^18.2.18",
