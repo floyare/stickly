@@ -4,8 +4,17 @@ import type { StickyNoteType } from "../../types/StickyBoardTypes";
 
 const StickyNote = ({note, updateNote}: {note: StickyNoteType, updateNote: (note: StickyNoteType) => void}) => {
     const [position, positionSet] = useState<{x: number, y: number}>({x: note.x ? note.x : 0, y: note.y ? note.y : 0})
+    const [content, contentSet] = useState(note.content)
+
+    const [showPin, showPinSet] = useState(true)
+
     const onStop = () => {
         updateNote({...note, x: position.x, y: position.y})
+        showPinSet(true)
+    }
+
+    const onStart = () => {
+        showPinSet(false)
     }
 
     const onDrag = (e: any, position: any) => {
@@ -14,10 +23,15 @@ const StickyNote = ({note, updateNote}: {note: StickyNoteType, updateNote: (note
     }
 
     return (
-        <Draggable onStop={onStop} onDrag={onDrag} handle=".dragger" position={{x: position.x, y: position.y}}>
+        <Draggable onStop={onStop} onDrag={onDrag} onStart={onStart} handle=".dragger" position={{x: position.x, y: position.y}}>
             <div className="sticky__note">
+                {showPin && 
+                    <img className="pin" src="./pin3.png"></img>
+                }
                 <div className="dragger"></div>
-                <p>{note.content}</p>
+                <div className="content">
+                    <p>{content}</p>
+                </div>
             </div>
         </Draggable>
     );

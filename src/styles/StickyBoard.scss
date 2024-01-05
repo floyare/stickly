@@ -8,13 +8,31 @@
 }
 
 .sticky__note{
-    background-color: yellow;
-    min-width: 200px;
+    background-color: $CL_PRIMARY;
+    min-width: 250px;
     min-height: 100px;
     position: absolute;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.372);
+    .pin{
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        filter: saturate(1);
+        z-index: 1;
+        width: 50px;
+        transform: translateX(-50%);
+        user-select: none;
+    }
+    .content{
+        padding: 10px;
+        font-size: 24px;
+        p{
+            border-bottom: 1px solid #8b835349;
+        }
+    }
     .dragger{
-        background-color: red;
-        height: 30px;
+        background-color: darken($CL_PRIMARY, 10);
+        height: 20px;
         width: 100%;
         cursor: grab;
     }

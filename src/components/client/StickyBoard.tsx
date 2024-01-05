@@ -5,36 +5,7 @@ import StickyNote from "./StickyNote";
 import type { StickyNoteType } from "../../types/StickyBoardTypes";
 
 const StickyBoard = () => {
-    const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([
-        {
-          "id": 38,
-          "content": "38",
-          "color": "yellow",
-          "x": -973,
-          "y": 300
-        },
-        {
-          "id": 88,
-          "content": "88",
-          "color": "yellow",
-          "x": -1181,
-          "y": 646
-        },
-        {
-          "id": 59,
-          "content": "59",
-          "color": "yellow",
-          "x": 1094,
-          "y": 283
-        },
-        {
-          "id": 24,
-          "content": "24",
-          "color": "yellow",
-          "x": 34,
-          "y": 58
-        }
-      ]);
+    const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([]);
 
     async function loadSavedBoard(){
         const storage = await localStorage.getItem("board");
@@ -83,6 +54,7 @@ const StickyBoard = () => {
         <section className="sticky__board">
             <h1>Sticky Board</h1>
             <button onClick={addNote}>Add note</button>
+            <button onClick={() => {localStorage.setItem("board", JSON.stringify([]))}}>Clear board</button>
             {stickyNotes && stickyNotes.map(note => {
                 return (
                     <StickyNote key={note.id} note={note} updateNote={updateNote} />
