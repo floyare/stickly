@@ -1,7 +1,8 @@
 export type StickyNoteType = {
     id: number;
-    content: string;
+    content?: string;
     color: string;
     x?: number;
     y?: number;
+    pinColorHue?: number
 }

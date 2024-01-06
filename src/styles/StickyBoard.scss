@@ -5,14 +5,17 @@
     background-color: $CL_BACKGROUND;
     width: 100%;
     height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
 }
 
 .sticky__note{
     background-color: $CL_PRIMARY;
-    min-width: 250px;
+    width: 250px;
     min-height: 100px;
     position: absolute;
     box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.372);
+    // transition: max-height .3s ease-in-out;
     .pin{
         position: absolute;
         top: -30px;
@@ -26,8 +29,28 @@
     .content{
         padding: 10px;
         font-size: 24px;
+        textarea{
+            font-size: 24px;
+            background-color: $CL_PRIMARY;
+            outline: none;
+            text-decoration: underline;
+            text-decoration-color: #8b835349;
+            border: none;
+            width: 100%;
+            max-width: 230px;
+            height: inherit;
+            resize: none;
+        }
+        span{
+            font-size: 18px;
+            color: #736b40e7;
+        }
         p{
-            border-bottom: 1px solid #8b835349;
+            text-decoration: underline;
+            text-decoration-color: #8b835349;
+            outline: none;
+            white-space: pre-line;
+            color: black;
         }
     }
     .dragger{
