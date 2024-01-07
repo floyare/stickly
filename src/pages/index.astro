@@ -1,10 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import StickyBoard from "../components/client/StickyBoard"
+import "../styles/StickyBoard.scss"
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
+<Layout title="stickly.">
+	<main class="page__board">
+		<h1>stickly.</h1>
 		<StickyBoard client:load/>
 	</main>
 </Layout>

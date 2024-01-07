@@ -1,15 +1,19 @@
 //import Styles from "../../styles/StickyBoard.module.scss"
 import { useState, useEffect } from "react";
-import "../../styles/StickyBoard.scss";
+// import "../../styles/StickyBoard.scss";
 import StickyNote from "./StickyNote";
 import type { StickyNoteType } from "../../types/StickyBoardTypes";
 import { useMemory } from "./hooks/useMemory";
+import BackgroundTip from "./BackgroundTip";
+import Modal from "./Modal";
+import { Trash } from "react-feather";
 
 const StickyBoard = () => {
     const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([]);
     const {memory, getPreviousMemoryState, getForwardMemoryState, addMemoryState} = useMemory([])
+    const [clearConfirmation, clearConfirmationSet] = useState(false);
 
-    
+    // ? MEMORY ?
     function revertToPreviousState(){
         const previousMemoryState = getPreviousMemoryState()
         if(!previousMemoryState) return
@@ -29,10 +33,8 @@ const StickyBoard = () => {
     useEffect(() => {
         const handleUndo = (event: KeyboardEvent) => {
             if (event.ctrlKey && event.key === 'z') {
-                //event.preventDefault()
                 revertToPreviousState();
             }else if(event.ctrlKey && event.key === 'y'){
-                //event.preventDefault()
                 redoForwardState()
             }
         };
@@ -50,7 +52,12 @@ const StickyBoard = () => {
         };
     }, [revertToPreviousState, redoForwardState]);
 
-
+    //? BOARD ?
+    function clearBoard(){
+        stickyNotesSet([]); 
+        localStorage.setItem("board", JSON.stringify([]))
+    }
+    
     async function loadSavedBoard(){
         const storage = await localStorage.getItem("board");
         if(!storage){
@@ -69,6 +76,16 @@ const StickyBoard = () => {
         console.log('Saved board', stickyNotesList)
     }
 
+    useEffect(() => {
+        loadSavedBoard()
+    }, [])
+
+    useEffect(() => {
+        if(stickyNotes)
+            saveBoard(stickyNotes)
+    }, [stickyNotes])
+
+    //? NOTES ?
     function addNote(){
         const id = stickyNotes[stickyNotes.length - 1] ? stickyNotes[stickyNotes.length - 1].id + 1 : 0;
         const pinColorHue = Math.floor(Math.random() * (360 - 0 + 1) + 0)
@@ -82,29 +99,29 @@ const StickyBoard = () => {
         stickyNotesSet(updatedNotes)
     }
 
-    useEffect(() => {
-        loadSavedBoard()
-    }, [])
-
-    useEffect(() => {
-        if(stickyNotes)
-            saveBoard(stickyNotes)
-    }, [stickyNotes])
-
     return (
-        <section className="sticky__board">
-            <h1>Sticky Board</h1>
-            <p>Use <kbd>Ctrl</kbd> + <kbd>Z</kbd> to undo and <kbd>Ctrl</kbd> + <kbd>Y</kbd> to redo!</p>
-            <button onClick={addNote}>Add note</button>
-            <button onClick={revertToPreviousState}>undo</button>
-            <button onClick={redoForwardState}>redo</button>
-            <button onClick={() => {stickyNotesSet([]); localStorage.setItem("board", JSON.stringify([]))}}>Clear board</button>
-            {stickyNotes && stickyNotes.map(note => {
-                return (
-                    <StickyNote key={note.id} note={note} updateNote={updateNote} />
-                )
-            })}
-        </section>
+        <>
+            {clearConfirmation && <Modal 
+                title="Clearing board" 
+                content="Are you sure you want to clear the board?" 
+                confirm={{text: "Clear", onClick: () => {clearBoard(); clearConfirmationSet(false)}}} 
+                cancel={{text: "Cancel", onClick: () => {clearConfirmationSet(false)}}} 
+            />}
+            <section className="sticky__board">
+                <div className="action__menu">
+                    <button onClick={addNote}>+</button>
+                    <button onClick={() => {clearConfirmationSet(true)}} className="cancel"><Trash /></button>
+                </div>
+                {/* <button onClick={revertToPreviousState}>undo</button>
+                <button onClick={redoForwardState}>redo</button> */}
+                {stickyNotes && stickyNotes.map(note => {
+                    return (
+                        <StickyNote key={note.id} note={note} updateNote={updateNote} />
+                    )
+                })}
+                <BackgroundTip />
+            </section>
+        </>
     );
 }
 
