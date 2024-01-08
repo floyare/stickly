@@ -9,6 +9,7 @@ import Modal from "./Modal";
 import { Trash } from "react-feather"
 import { Transition, TransitionGroup } from "react-transition-group";
 import "../../styles/Transitions.scss"
+import Animated from "./Animated";
 
 const StickyBoard = () => {
     const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([]);
@@ -103,12 +104,17 @@ const StickyBoard = () => {
 
     return (
         <>
-            {clearConfirmation && <Modal 
-                title="Clearing board" 
-                content="Are you sure you want to clear the board?" 
-                confirm={{text: "Clear", onClick: () => {clearBoard(); clearConfirmationSet(false)}}} 
-                cancel={{text: "Cancel", onClick: () => {clearConfirmationSet(false)}}} 
-            />}
+            <Transition in={clearConfirmation} timeout={290} mountOnEnter unmountOnExit>
+                {(state) => (
+                    <Modal 
+                        title="Clearing board" 
+                        content="Are you sure you want to clear the board?" 
+                        confirm={{text: "Cancel", onClick: () => {clearConfirmationSet(false)}}} 
+                        cancel={{text: "Clear", onClick: () => {clearBoard(); clearConfirmationSet(false)}}} 
+                        className={"modal-transition-" + state}
+                    />
+                )}
+            </Transition>
             <section className="sticky__board">
                 <div className="action__menu">
                     <button onClick={addNote} aria-label="Add note">+</button>
@@ -119,7 +125,7 @@ const StickyBoard = () => {
                 <TransitionGroup className="notes">
                     {stickyNotes && stickyNotes.map(note => {
                         return (
-                            <Transition key={note.id} timeout={300} unmountOnExit>
+                            <Transition key={note.id} timeout={290} unmountOnExit>
                                 {(state) => (
                                     <StickyNote note={note} updateNote={updateNote} key={note.id} className={`note-transition-${state}`}/>
                                 )}

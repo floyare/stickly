@@ -4,12 +4,13 @@ type Props = {
     title: string,
     content: string,
     confirm?: {text: string, onClick: () => void},
-    cancel?: {text: string, onClick: () => void}
+    cancel?: {text: string, onClick: () => void},
+    className?: string
 }
 
 const Modal = (props: Props) => {
     return (
-        <div className="modal__wrapper">
+        <div className={"modal__wrapper " + props.className}>
             <div className="modal__box">
                 <h2 className="modal__title">{props.title}</h2>
                 <div className="content">

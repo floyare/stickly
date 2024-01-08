@@ -1,5 +1,7 @@
 @import "_globals.scss";
 
+//! PIN
+
 .pin-transition-enter {
     opacity: 0;
     transform: translate(-40%, -10px) !important;
@@ -22,6 +24,8 @@
     transition: opacity 300ms, transform 300ms;
 }
 
+//! NOTE
+
 .note-transition-entering{
     opacity: 0;
     transform: var(--initial-transform) scale(0);
@@ -41,4 +45,24 @@
     opacity: 0;
     transform: var(--initial-transform) scale(0);
     transition: opacity 300ms, transform 300ms;
+}
+
+//! MODAL
+.modal-transition-entering{
+    opacity: 0;
+}
+
+.modal-transition-entered{
+    animation: fadeIn 300ms ease-in-out;
+    opacity: 1;
+    transition: opacity 300ms;
+}
+
+.modal-transition-exiting{
+    animation: fadeOut 300ms ease-in-out;
+}
+
+.modal-transition-exited{
+    opacity: 0;
+    transition: opacity 300ms
 }
