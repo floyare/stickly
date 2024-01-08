@@ -21,3 +21,24 @@
     transform: translate(-40%, -10px) !important;
     transition: opacity 300ms, transform 300ms;
 }
+
+.note-transition-entering{
+    opacity: 0;
+    transform: var(--initial-transform) scale(0);
+}
+
+.note-transition-entered{
+    animation: fadeIn 300ms ease-in-out;
+    opacity: 1;
+    transition: opacity 300ms;
+}
+
+.note-transition-exiting{
+    animation: fadeOut 300ms ease-in-out;
+}
+
+.note-transition-exited{
+    opacity: 0;
+    transform: var(--initial-transform) scale(0);
+    transition: opacity 300ms, transform 300ms;
+}

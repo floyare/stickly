@@ -82,6 +82,17 @@ kbd {
     }
 }
 
+@keyframes fadeOut {
+    from{
+        transform: var(--initial-transform) scale(1);
+        opacity: 1;
+    }
+    to{
+        transform: var(--initial-transform) scale(0);
+        opacity: 0;
+    }
+}
+
 @keyframes bounceIn {
 from,
 20%,

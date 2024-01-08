@@ -7,6 +7,8 @@ import { useMemory } from "./hooks/useMemory";
 import BackgroundTip from "./BackgroundTip";
 import Modal from "./Modal";
 import { Trash } from "react-feather"
+import { Transition, TransitionGroup } from "react-transition-group";
+import "../../styles/Transitions.scss"
 
 const StickyBoard = () => {
     const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([]);
@@ -114,13 +116,17 @@ const StickyBoard = () => {
                 </div>
                 {/* <button onClick={revertToPreviousState}>undo</button>
                 <button onClick={redoForwardState}>redo</button> */}
-                <div className="notes" >
+                <TransitionGroup className="notes">
                     {stickyNotes && stickyNotes.map(note => {
                         return (
-                            <StickyNote key={note.id} note={note} updateNote={updateNote} />
+                            <Transition key={note.id} timeout={300} unmountOnExit>
+                                {(state) => (
+                                    <StickyNote note={note} updateNote={updateNote} key={note.id} className={`note-transition-${state}`}/>
+                                )}
+                            </Transition>
                         )
                     })}
-                </div>
+                </TransitionGroup>
                 <BackgroundTip />
             </section>
         </>

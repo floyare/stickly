@@ -3,7 +3,7 @@ import Draggable from 'react-draggable';
 import type { StickyNoteType } from "../../types/StickyBoardTypes";
 import Animated from "./Animated";
 
-const StickyNote = ({note, updateNote}: {note: StickyNoteType, updateNote: (note: StickyNoteType) => void}) => {
+const StickyNote = ({note, updateNote, className}: {note: StickyNoteType, updateNote: (note: StickyNoteType) => void, className?: string}) => {
     const [position, positionSet] = useState<{x: number, y: number}>({x: note.x ? note.x : 0, y: note.y ? note.y : 0})
     const [content, contentSet] = useState(note.content)
     const [editMode, editModeSet] = useState(false)
@@ -47,33 +47,33 @@ const StickyNote = ({note, updateNote}: {note: StickyNoteType, updateNote: (note
     }, [content])
 
     return (
-        <Draggable /*grid={[100,100]}*/ bounds="parent" onStop={onStop} onDrag={onDrag} onStart={onStart} handle=".dragger" position={{x: position.x, y: position.y}}>
-            {/* @ts-ignore */}
-            <div className="sticky__note" style={{'--initial-transform': `translate(${position.x}px, ${position.y}px)`}}>
-                <Animated classProp="pin-transition" inProp={showPin} timeout={0}>
-                    <img className="pin" style={{filter: `hue-rotate(${note.pinColorHue}deg)`,}} src="./pin3.png" />
-                </Animated>
+            <Draggable /*grid={[100,100]}*/ bounds="parent" onStop={onStop} onDrag={onDrag} onStart={onStart} handle=".dragger" position={{x: position.x, y: position.y}}>
+                    {/* @ts-ignore */}
+                    <div className={"sticky__note " + className} style={{'--initial-transform': `translate(${position.x}px, ${position.y}px)`}}>
+                        <Animated classProp="pin-transition" inProp={showPin} timeout={0}>
+                            <img className="pin" style={{filter: `hue-rotate(${note.pinColorHue}deg)`,}} src="./pin3.png" />
+                        </Animated>
 
-                <div className="dragger"></div>
-                <div className="content">
-                    {!editMode && <p onDoubleClick={() => {editModeSet(true)}}>
-                        {content ? content : <span>Double click here to change content of this note...</span>}
-                    </p>}
-                    {editMode && <textarea 
-                        value={content} 
-                        ref={textRef}
-                        onMouseEnter={updateTextHeight}
-                        spellCheck="false"
-                        onChange={(e) => {
-                            updateTextHeight(e)
-                            contentSet(e.target.value)
-                            isContentUpdated.current = true;
-                        }} 
-                        onBlur={() => editModeSet(false)}>
-                    </textarea>}
-                </div>
-            </div>            
-        </Draggable>
+                        <div className="dragger"></div>
+                        <div className="content">
+                            {!editMode && <p onDoubleClick={() => {editModeSet(true)}}>
+                                {content ? content : <span>Double click here to change content of this note...</span>}
+                            </p>}
+                            {editMode && <textarea 
+                                value={content} 
+                                ref={textRef}
+                                onMouseEnter={updateTextHeight}
+                                spellCheck="false"
+                                onChange={(e) => {
+                                    updateTextHeight(e)
+                                    contentSet(e.target.value)
+                                    isContentUpdated.current = true;
+                                }} 
+                                onBlur={() => editModeSet(false)}>
+                            </textarea>}
+                        </div>
+                    </div>   
+            </Draggable>    
     );
 }
  

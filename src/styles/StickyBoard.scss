@@ -61,9 +61,7 @@
     position: absolute;
     box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.372);
     transform: var(--initial-transform);
-    animation: fadeIn 0.4s ease-in-out;
-    // transition: max-height .3s ease-in-out;
-    //animation: bounceIn .3s ease-in-out;
+    //animation: fadeIn 0.4s ease-in-out;
     .pin{
         position: absolute;
         top: -30px;
