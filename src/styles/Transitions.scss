@@ -1,0 +1,23 @@
+@import "_globals.scss";
+
+.pin-transition-enter {
+    opacity: 0;
+    transform: translate(-40%, -10px) !important;
+}
+
+.pin-transition-enter-done {
+    opacity: 1;
+    transform: translateX(-50%) !important;
+    transition: opacity 300ms, transform 300ms;
+}
+
+.pin-transition-exit {
+    opacity: 1;
+    transform: translateX(-50%) !important;
+}
+
+.pin-transition-exit-done {
+    opacity: 0;
+    transform: translate(-40%, -10px) !important;
+    transition: opacity 300ms, transform 300ms;
+}
