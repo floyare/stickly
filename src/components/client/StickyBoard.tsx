@@ -6,7 +6,7 @@ import type { StickyNoteType } from "../../types/StickyBoardTypes";
 import { useMemory } from "./hooks/useMemory";
 import BackgroundTip from "./BackgroundTip";
 import Modal from "./Modal";
-import { Trash } from "react-feather";
+import { Trash } from "react-feather"
 
 const StickyBoard = () => {
     const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([]);
@@ -109,16 +109,18 @@ const StickyBoard = () => {
             />}
             <section className="sticky__board">
                 <div className="action__menu">
-                    <button onClick={addNote}>+</button>
-                    <button onClick={() => {clearConfirmationSet(true)}} className="cancel"><Trash /></button>
+                    <button onClick={addNote} aria-label="Add note">+</button>
+                    <button onClick={() => {clearConfirmationSet(true)}} className="cancel" aria-label="Clear the board"><Trash /></button>
                 </div>
                 {/* <button onClick={revertToPreviousState}>undo</button>
                 <button onClick={redoForwardState}>redo</button> */}
-                {stickyNotes && stickyNotes.map(note => {
-                    return (
-                        <StickyNote key={note.id} note={note} updateNote={updateNote} />
-                    )
-                })}
+                <div className="notes" >
+                    {stickyNotes && stickyNotes.map(note => {
+                        return (
+                            <StickyNote key={note.id} note={note} updateNote={updateNote} />
+                        )
+                    })}
+                </div>
                 <BackgroundTip />
             </section>
         </>

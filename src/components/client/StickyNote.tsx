@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type SyntheticEvent } from "react";
 import Draggable from 'react-draggable';
 import type { StickyNoteType } from "../../types/StickyBoardTypes";
+import { motion, AnimatePresence } from "framer-motion"
 
 const StickyNote = ({note, updateNote}: {note: StickyNoteType, updateNote: (note: StickyNoteType) => void}) => {
     const [position, positionSet] = useState<{x: number, y: number}>({x: note.x ? note.x : 0, y: note.y ? note.y : 0})
@@ -47,10 +48,18 @@ const StickyNote = ({note, updateNote}: {note: StickyNoteType, updateNote: (note
 
     return (
         <Draggable /*grid={[100,100]}*/ bounds="parent" onStop={onStop} onDrag={onDrag} onStart={onStart} handle=".dragger" position={{x: position.x, y: position.y}}>
-            <div className="sticky__note">
-                {showPin && 
-                    <img className="pin" style={{filter: `hue-rotate(${note.pinColorHue}deg)`}} src="./pin3.png"></img>
-                }
+            {/* @ts-ignore */}
+            <div className="sticky__note" style={{'--initial-transform': `translate(${position.x}px, ${position.y}px)`}}>
+                <AnimatePresence>
+                    {showPin && 
+                        <motion.img 
+                            initial={{x: 10, y: -10, opacity: 0}}
+                            animate={{x: 0, y: 0, opacity: 1}}
+                            exit={{x: 10, y: -10, opacity: 0}}
+                            className="pin" style={{filter: `hue-rotate(${note.pinColorHue}deg)`}} src="./pin3.png">
+                        </motion.img>
+                    }
+                </AnimatePresence>
                 <div className="dragger"></div>
                 <div className="content">
                     {!editMode && <p onDoubleClick={() => {editModeSet(true)}}>
@@ -69,7 +78,7 @@ const StickyNote = ({note, updateNote}: {note: StickyNoteType, updateNote: (note
                         onBlur={() => editModeSet(false)}>
                     </textarea>}
                 </div>
-            </div>
+            </div>            
         </Draggable>
     );
 }

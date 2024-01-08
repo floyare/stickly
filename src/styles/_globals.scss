@@ -71,6 +71,17 @@ kbd {
     white-space: nowrap;
   }
 
+@keyframes fadeIn {
+    from{
+        transform: var(--initial-transform) scale(0);
+        opacity: 0;
+    }
+    to{
+        transform: var(--initial-transform) scale(1);
+        opacity: 1;
+    }
+}
+
 @keyframes bounceIn {
 from,
 20%,
