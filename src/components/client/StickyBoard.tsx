@@ -199,9 +199,12 @@ const StickyBoard = () => {
 
     return (
         <>
-            {contextMenuData.visible && 
-                <ContextMenu items={contextMenuData.menuData} ref={contextMenuRef} style={{top: contextMenuData.position.y, left: contextMenuData.position.x}}/>
-            }
+            <Transition in={contextMenuData.visible} timeout={90} mountOnEnter unmountOnExit>
+                {(state) => (
+                    <ContextMenu items={contextMenuData.menuData} ref={contextMenuRef} style={{top: contextMenuData.position.y, left: contextMenuData.position.x}} className={"context-transition-" + state}/>
+                )}
+            </Transition>
+
             <Transition in={clearConfirmation} timeout={290} mountOnEnter unmountOnExit>
                 {(state) => (
                     <Modal 

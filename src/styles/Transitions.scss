@@ -66,3 +66,23 @@
     opacity: 0;
     transition: opacity 300ms
 }
+
+//! CONTEXT
+.context-transition-entering{
+    opacity: 0;
+}
+
+.context-transition-entered{
+    animation: fadeIn 100ms ease-in-out;
+    opacity: 1;
+    transition: opacity 100ms;
+}
+
+.context-transition-exiting{
+    animation: fadeOut 100ms ease-in-out;
+}
+
+.context-transition-exited{
+    opacity: 0;
+    transition: opacity 100ms
+}
