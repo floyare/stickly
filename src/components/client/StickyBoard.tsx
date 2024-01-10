@@ -1,20 +1,45 @@
 //import Styles from "../../styles/StickyBoard.module.scss"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // import "../../styles/StickyBoard.scss";
 import StickyNote from "./StickyNote";
 import type { StickyNoteType } from "../../types/StickyBoardTypes";
 import { useMemory } from "./hooks/useMemory";
 import BackgroundTip from "./BackgroundTip";
 import Modal from "./Modal";
-import { Trash } from "react-feather"
+import { ArrowLeftCircle, ArrowRightCircle, Trash } from "react-feather"
 import { Transition, TransitionGroup } from "react-transition-group";
 import "../../styles/Transitions.scss"
 import Animated from "./Animated";
+import ContextMenu from "./ContextMenu";
+import type { ContextMenuType } from "../../types/ContextMenuTypes";
 
 const StickyBoard = () => {
     const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([]);
     const {memory, getPreviousMemoryState, getForwardMemoryState, addMemoryState} = useMemory([])
     const [clearConfirmation, clearConfirmationSet] = useState(false);
+
+    const defaultContextMenuBoardItems: ContextMenuType[] = [
+        {
+            button: {
+                content: "Undo",
+                icon: <ArrowLeftCircle/>
+            },
+            onClick: () => revertToPreviousState(),
+            isDisabled: false
+        },
+        {
+            button: {
+                content: "Redo",
+                icon: <ArrowRightCircle/>
+            },
+            onClick: () => redoForwardState(),
+            isDisabled: false
+        }
+    ]
+
+    const contextMenuRef = useRef<HTMLDivElement | null>(null);
+    const [contextMenuData, contextMenuDataSet] = useState<{visible: boolean, position: {x: number, y: number}, target: any, menuData: ContextMenuType[]}>
+            ({visible: false, position: {x: 0, y: 0}, target: null, menuData: defaultContextMenuBoardItems})
 
     // ? MEMORY ?
     function revertToPreviousState(){
@@ -42,16 +67,80 @@ const StickyBoard = () => {
             }
         };
 
+        const handleClickOutside = (event: MouseEvent) => {
+            if (contextMenuRef.current /* && !contextMenuRef.current.contains(event.target as Node)*/) {
+                contextMenuDataSet({ ...contextMenuData, visible: false });
+            }
+        };
+
+        const getOffsetParent = (element: HTMLDivElement) => {
+            if(element.classList.contains("sticky__board"))
+                return "BOARD"
+            else if(element.classList.contains("sticky__note"))
+                return "NOTE"
+            else return "UNKNOWN"
+        }
+
+        const getIdFromNote = (element: HTMLDivElement) => {
+            return Number(element.id.replace("note__", ""));
+        }
+
         const handleOnContext = (event: MouseEvent) => {
             event.preventDefault()
+
+            let posX = event.pageX;
+            let posY = event.pageY;
+
+            const contextMaxWidth = contextMenuRef.current?.clientWidth ? contextMenuRef.current?.clientWidth : 100;
+            const contextPadding = 10;
+            const windowSize = {width:  window.innerWidth, height:  window.innerHeight};
+            console.log(windowSize, {posX, posY})
+
+            if((windowSize.width - posX) < contextMaxWidth)
+                posX = (windowSize.width - (contextMaxWidth + contextPadding))
+
+            const contextHeight = contextMenuRef.current?.clientHeight ? contextMenuRef.current?.clientHeight : 300;
+            if((windowSize.height - posY) <  contextHeight)
+                posY = (windowSize.height - (contextHeight + contextPadding))
+
+            //@ts-ignore
+            const originalTarget = event.originalTarget.offsetParent;
+
+            const offsetParent = getOffsetParent(originalTarget)
+            let contextMenu = defaultContextMenuBoardItems
+            if(offsetParent === "NOTE"){
+                const id = getIdFromNote(originalTarget);
+                const modifiedContextMenuItems = defaultContextMenuBoardItems
+                const contextMenuAction: ContextMenuType = {
+                    button: {
+                        content: "Delete",
+                        className: "cancel",
+                        icon: <Trash />
+                    },
+                    onClick: () => deleteNote(id),
+                    isDisabled: false
+                }
+
+                modifiedContextMenuItems.splice(0, 0, contextMenuAction)
+                contextMenu = modifiedContextMenuItems
+            }
+
+            const sameTarget = ((contextMenuData.position.x === posX  && contextMenuData.position.y === posY)) as boolean
+            if(sameTarget){
+                contextMenuDataSet({visible: false, position: {x: 0, y: 0}, target: null, menuData: contextMenu})
+                return
+            }
+
+            contextMenuDataSet({visible: true, position: {x: posX, y: posY}, target: event.target, menuData: contextMenu})
         }
 
         window.addEventListener('keydown', handleUndo);
         window.addEventListener('contextmenu', handleOnContext);
-
+        window.addEventListener('click', handleClickOutside);
         return () => {
             window.removeEventListener('keydown', handleUndo);
             window.removeEventListener('contextmenu', handleOnContext);
+            window.removeEventListener('click', handleClickOutside);
         };
     }, [revertToPreviousState, redoForwardState]);
 
@@ -102,8 +191,17 @@ const StickyBoard = () => {
         stickyNotesSet(updatedNotes)
     }
 
+    function deleteNote(noteId: number){
+        const updatedNotes = stickyNotes.filter(p => p.id !== noteId)
+        addMemoryState(updatedNotes)
+        stickyNotesSet(updatedNotes)
+    }
+
     return (
         <>
+            {contextMenuData.visible && 
+                <ContextMenu items={contextMenuData.menuData} ref={contextMenuRef} style={{top: contextMenuData.position.y, left: contextMenuData.position.x}}/>
+            }
             <Transition in={clearConfirmation} timeout={290} mountOnEnter unmountOnExit>
                 {(state) => (
                     <Modal 

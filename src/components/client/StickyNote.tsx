@@ -49,7 +49,7 @@ const StickyNote = ({note, updateNote, className}: {note: StickyNoteType, update
     return (
             <Draggable /*grid={[100,100]}*/ bounds="parent" onStop={onStop} onDrag={onDrag} onStart={onStart} handle=".dragger" position={{x: position.x, y: position.y}}>
                     {/* @ts-ignore */}
-                    <div className={"sticky__note " + className} style={{'--initial-transform': `translate(${position.x}px, ${position.y}px)`}}>
+                    <div className={"sticky__note " + className} style={{'--initial-transform': `translate(${position.x}px, ${position.y}px)`}} id={"note__" + note.id}>
                         <Animated classProp="pin-transition" inProp={showPin} timeout={0}>
                             <img className="pin" style={{filter: `hue-rotate(${note.pinColorHue}deg)`,}} src="./pin3.png" />
                         </Animated>
