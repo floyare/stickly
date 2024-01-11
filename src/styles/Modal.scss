@@ -15,7 +15,7 @@
         box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.372);
         border: 1px solid lighten($CL_BACKGROUND, 10);
         padding: 20px;
-        border-radius: 5px;
+        border-radius: $GLOBAL_BORDER_RADIUS;
         max-width: 400px;
         .content{
             padding: 10px 0px;

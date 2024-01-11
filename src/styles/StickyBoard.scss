@@ -18,30 +18,45 @@
     background-image: radial-gradient(lighten($CL_BACKGROUND, 10) 1px, transparent 0);
     background-size: 40px 40px;
     background-position: 0px 0px;
-    border-radius: 5px;
+    border-radius: $GLOBAL_BORDER_RADIUS;
    //overflow: hidden;
+    z-index: 0;
     .notes{
         height: 100%;
     }
     .action__menu{
         position:absolute;
-        top: 0;
+        bottom: 0;
         left: 50%;
         transform: translateX(-50%);
         padding: 10px;
         z-index: 5;
         display: flex;
         gap: 10px;
+        background-color: darken($CL_BACKGROUND, 2);
+        border-top-left-radius: $GLOBAL_BORDER_RADIUS;
+        border-top-right-radius: $GLOBAL_BORDER_RADIUS;
+        border: 1px solid lighten($CL_BACKGROUND, 10);
+        border-bottom:0px !important;
+        box-shadow:
+          0 1px 1px rgba(0, 0, 0, 0.2),
+          0 2px 0 0 rgba($CL_BACKGROUND, .7) inset;
+        padding: 15px;
         button{
             border: none;
             color: $CL_TEXT;
-            background-color: lighten($CL_BACKGROUND, 5);
-            box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.372);
-            border: 1px solid lighten($CL_BACKGROUND, 10);
-            font-size: 36px;
+            // background-color: lighten($CL_BACKGROUND, 5);
+            // box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.372);
+            // border: 1px solid lighten($CL_BACKGROUND, 10);
+            font-size: 48px;
             padding: 5px 20px;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 100%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 
@@ -50,12 +65,13 @@
         bottom: 15px;
         left: 15px;
         background-color: darken($CL_BACKGROUND, 2);
-        border-radius: 3px;
+        border-radius: $GLOBAL_BORDER_RADIUS;
         border: 1px solid lighten($CL_BACKGROUND, 10);
         box-shadow:
           0 1px 1px rgba(0, 0, 0, 0.2),
           0 2px 0 0 rgba($CL_BACKGROUND, .7) inset;
         padding: 15px;
+        z-index: -1;
     }
 }
 

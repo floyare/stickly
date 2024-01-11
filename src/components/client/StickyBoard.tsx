@@ -6,7 +6,7 @@ import type { StickyNoteType } from "../../types/StickyBoardTypes";
 import { useMemory } from "./hooks/useMemory";
 import BackgroundTip from "./BackgroundTip";
 import Modal from "./Modal";
-import { ArrowLeftCircle, ArrowRightCircle, Plus, Trash } from "react-feather"
+import { AlignLeft, ArrowLeftCircle, ArrowRightCircle, Plus, Trash } from "react-feather"
 import { Transition, TransitionGroup } from "react-transition-group";
 import "../../styles/Transitions.scss"
 import ContextMenu from "./ContextMenu";
@@ -24,7 +24,7 @@ const StickyBoard = () => {
                 className: "confirm",
                 icon: <Plus/>
             },
-            onClick: () => {addNote(true)},
+            onClick: () => {addNote(latestCursorPosition)},
             isDisabled: false
         },
         {
@@ -96,6 +96,16 @@ const StickyBoard = () => {
 
         const handleOnContext = (event: MouseEvent) => {
             event.preventDefault()
+            //console.log(event)
+
+            //@ts-ignore
+            //latestCursorPositionSet({x: event.layerX, y: event.layerY})
+
+            //? Weird fix
+            const index = defaultContextMenuBoardItems.findIndex(p => p.button.content === "Add new")
+            //@ts-ignore
+            const currentCursorPosition = {x: event.layerX, y: event.layerY};
+            defaultContextMenuBoardItems[index].onClick = (() => {addNote(currentCursorPosition)})
 
             let posX = event.pageX;
             let posY = event.pageY;
@@ -144,7 +154,6 @@ const StickyBoard = () => {
             //@ts-ignore
             const boardSizes = {width: event.target?.clientWidth, height: event.target?.clientHeight}
 
-            console.log(event)
             //latestCursorPositionSet()
             contextMenuDataSet({visible: true, position: {x: posX, y: posY}, target: event.target, menuData: contextMenu})
         }
@@ -193,12 +202,14 @@ const StickyBoard = () => {
     }, [stickyNotes])
 
     //? NOTES ?
-    function addNote(useContextMenuPosition?: boolean){
-        console.log(contextMenuData.position)
-        console.log({x: useContextMenuPosition ? contextMenuData.position.x : 0, y: useContextMenuPosition ? contextMenuData.position.y : 0})
+    function addNote(position?: {x: number, y: number}){
+        console.log(position)
+        const posObject = {x: position ? position.x : 0, y: position? position.y : 0}
+        console.log(posObject)
+
         const id = stickyNotes[stickyNotes.length - 1] ? stickyNotes[stickyNotes.length - 1].id + 1 : 0;
         const pinColorHue = Math.floor(Math.random() * (360 - 0 + 1) + 0)
-        stickyNotesSet([...stickyNotes, {id: id, content: "", color: "yellow", x: useContextMenuPosition ? contextMenuData.position.x : 0, y: useContextMenuPosition ? contextMenuData.position.y : 0, pinColorHue: pinColorHue}])
+        stickyNotesSet([...stickyNotes, {...posObject, id: id, content: "", color: "yellow", pinColorHue: pinColorHue}])
     }
 
     function updateNote(updatedNote: StickyNoteType){
@@ -214,7 +225,7 @@ const StickyBoard = () => {
         stickyNotesSet(updatedNotes)
     }
 
-    function settleNotes(){
+    function arrangeNotes(){
         let currentArray =stickyNotes;
         let currentBoundaries = { x: 0, y: 0 };
         const noteMargin = 5;
@@ -251,6 +262,7 @@ const StickyBoard = () => {
             return updatedNote
         });
 
+        addMemoryState(updatedNotes)
         stickyNotesSet(updatedNotes)
     }
 
@@ -276,9 +288,9 @@ const StickyBoard = () => {
             </Transition>
             <section className="sticky__board">
                 <div className="action__menu">
-                    <button onClick={() => addNote()} aria-label="Add note">+</button>
-                    <button onClick={() => {clearConfirmationSet(true)}} className="cancel" aria-label="Clear the board"><Trash /></button>
-                    <button onClick={() => settleNotes()}>debug</button>
+                    <button onClick={() => addNote()} aria-label="Add note" title="Add note">+</button>
+                    <button onClick={() => {clearConfirmationSet(true)}} className="cancel" aria-label="Clear the board" title="Clear the board"><Trash /></button>
+                    <button onClick={() => arrangeNotes()} aria-label="Align the notes" title="Align the notes"><AlignLeft /></button>
                 </div>
                 {/* <button onClick={revertToPreviousState}>undo</button>
                 <button onClick={redoForwardState}>redo</button> */}
