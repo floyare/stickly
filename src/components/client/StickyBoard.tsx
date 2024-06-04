@@ -14,7 +14,7 @@ import type { ContextMenuType } from "../../types/ContextMenuTypes";
 
 const StickyBoard = () => {
     const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([]);
-    const {memory, getPreviousMemoryState, getForwardMemoryState, addMemoryState} = useMemory([])
+    const { memory, getPreviousMemoryState, getForwardMemoryState, addMemoryState, currentMemoryStateId, currentMemoryStateIdSet } = useMemory([])
     const [clearConfirmation, clearConfirmationSet] = useState(false);
 
     const defaultContextMenuBoardItems: ContextMenuType[] = [
@@ -22,15 +22,15 @@ const StickyBoard = () => {
             button: {
                 content: "Add new",
                 className: "confirm",
-                icon: <Plus/>
+                icon: <Plus />
             },
-            onClick: () => {addNote(latestCursorPosition)},
+            onClick: () => { addNote(latestCursorPosition) },
             isDisabled: false
         },
         {
             button: {
                 content: "Undo",
-                icon: <ArrowLeftCircle/>
+                icon: <ArrowLeftCircle />
             },
             onClick: () => revertToPreviousState(),
             isDisabled: false
@@ -38,7 +38,7 @@ const StickyBoard = () => {
         {
             button: {
                 content: "Redo",
-                icon: <ArrowRightCircle/>
+                icon: <ArrowRightCircle />
             },
             onClick: () => redoForwardState(),
             isDisabled: false
@@ -46,32 +46,40 @@ const StickyBoard = () => {
     ]
 
     const contextMenuRef = useRef<HTMLDivElement | null>(null);
-    const [latestCursorPosition, latestCursorPositionSet] = useState<{x: number, y: number}>({x: 0, y: 0})
-    const [contextMenuData, contextMenuDataSet] = useState<{visible: boolean, position: {x: number, y: number}, target: any, menuData: ContextMenuType[]}>
-            ({visible: false, position: {x: 0, y: 0}, target: null, menuData: defaultContextMenuBoardItems})
+    const [latestCursorPosition, latestCursorPositionSet] = useState<{ x: number, y: number }>({ x: 0, y: 0 })
+    const [contextMenuData, contextMenuDataSet] = useState<{ visible: boolean, position: { x: number, y: number }, target: any, menuData: ContextMenuType[] }>
+        ({ visible: false, position: { x: 0, y: 0 }, target: null, menuData: defaultContextMenuBoardItems })
 
     // ? MEMORY ?
-    function revertToPreviousState(){
+    function revertToPreviousState() {
         const previousMemoryState = getPreviousMemoryState()
-        if(!previousMemoryState) return
-        
-        console.log('undo to:', previousMemoryState)
-        stickyNotesSet(previousMemoryState)
+        if (!previousMemoryState) return
+
+        currentMemoryStateIdSet(previousMemoryState.id)
+        console.log('undo to:', previousMemoryState.id)
+        console.log(previousMemoryState)
+        stickyNotesSet(previousMemoryState.data)
     }
-    
-    function redoForwardState(){
+
+    function redoForwardState() {
         const forwardMemoryState = getForwardMemoryState()
-        if(!forwardMemoryState) return
-        
-        console.log('redo to:', forwardMemoryState)
-        stickyNotesSet(forwardMemoryState)
+        if (!forwardMemoryState) return
+
+        currentMemoryStateIdSet(forwardMemoryState.id)
+        console.log('redo to:', forwardMemoryState.id)
+        console.log(forwardMemoryState)
+        stickyNotesSet(forwardMemoryState.data)
     }
+
+    useEffect(() => {
+        console.log('currentMemory', memory)
+    }, [memory])
 
     useEffect(() => {
         const handleUndo = (event: KeyboardEvent) => {
             if (event.ctrlKey && event.key === 'z') {
                 revertToPreviousState();
-            }else if(event.ctrlKey && event.key === 'y'){
+            } else if (event.ctrlKey && event.key === 'y') {
                 redoForwardState()
             }
         };
@@ -83,9 +91,9 @@ const StickyBoard = () => {
         };
 
         const getOffsetParent = (element: HTMLDivElement) => {
-            if(element.classList.contains("sticky__board"))
+            if (element.classList.contains("sticky__board"))
                 return "BOARD"
-            else if(element.classList.contains("sticky__note"))
+            else if (element.classList.contains("sticky__note"))
                 return "NOTE"
             else return "UNKNOWN"
         }
@@ -104,22 +112,22 @@ const StickyBoard = () => {
             //? Weird fix
             const index = defaultContextMenuBoardItems.findIndex(p => p.button.content === "Add new")
             //@ts-ignore
-            const currentCursorPosition = {x: event.layerX, y: event.layerY};
-            defaultContextMenuBoardItems[index].onClick = (() => {addNote(currentCursorPosition)})
+            const currentCursorPosition = { x: event.layerX, y: event.layerY };
+            defaultContextMenuBoardItems[index].onClick = (() => { addNote(currentCursorPosition) })
 
             let posX = event.pageX;
             let posY = event.pageY;
 
             const contextMaxWidth = contextMenuRef.current?.clientWidth ? contextMenuRef.current?.clientWidth : 100;
             const contextPadding = 10;
-            const windowSize = {width:  window.innerWidth, height:  window.innerHeight};
-            console.log(windowSize, {posX, posY})
+            const windowSize = { width: window.innerWidth, height: window.innerHeight };
+            console.log(windowSize, { posX, posY })
 
-            if((windowSize.width - posX) < contextMaxWidth)
+            if ((windowSize.width - posX) < contextMaxWidth)
                 posX = (windowSize.width - (contextMaxWidth + contextPadding))
 
             const contextHeight = contextMenuRef.current?.clientHeight ? contextMenuRef.current?.clientHeight : 300;
-            if((windowSize.height - posY) <  contextHeight)
+            if ((windowSize.height - posY) < contextHeight)
                 posY = (windowSize.height - (contextHeight + contextPadding))
 
             //@ts-ignore
@@ -127,7 +135,7 @@ const StickyBoard = () => {
 
             const offsetParent = getOffsetParent(originalTarget)
             let contextMenu = defaultContextMenuBoardItems
-            if(offsetParent === "NOTE"){
+            if (offsetParent === "NOTE") {
                 const id = getIdFromNote(originalTarget);
                 let modifiedContextMenuItems = defaultContextMenuBoardItems
                 const contextMenuAction: ContextMenuType = {
@@ -145,17 +153,17 @@ const StickyBoard = () => {
                 contextMenu = modifiedContextMenuItems
             }
 
-            const sameTarget = ((contextMenuData.position.x === posX  && contextMenuData.position.y === posY)) as boolean
-            if(sameTarget){
-                contextMenuDataSet({visible: false, position: {x: 0, y: 0}, target: null, menuData: contextMenu})
+            const sameTarget = ((contextMenuData.position.x === posX && contextMenuData.position.y === posY)) as boolean
+            if (sameTarget) {
+                contextMenuDataSet({ visible: false, position: { x: 0, y: 0 }, target: null, menuData: contextMenu })
                 return
             }
 
             //@ts-ignore
-            const boardSizes = {width: event.target?.clientWidth, height: event.target?.clientHeight}
+            const boardSizes = { width: event.target?.clientWidth, height: event.target?.clientHeight }
 
             //latestCursorPositionSet()
-            contextMenuDataSet({visible: true, position: {x: posX, y: posY}, target: event.target, menuData: contextMenu})
+            contextMenuDataSet({ visible: true, position: { x: posX, y: posY }, target: event.target, menuData: contextMenu })
         }
 
         window.addEventListener('keydown', handleUndo);
@@ -169,27 +177,27 @@ const StickyBoard = () => {
     }, [revertToPreviousState, redoForwardState]);
 
     //? BOARD ?
-    function clearBoard(){
-        stickyNotesSet([]); 
+    function clearBoard() {
+        stickyNotesSet([]);
         localStorage.setItem("board", JSON.stringify([]))
     }
-    
-    async function loadSavedBoard(){
+
+    async function loadSavedBoard() {
         const storage = await localStorage.getItem("board");
-        if(!storage){
+        if (!storage) {
             localStorage.setItem("board", JSON.stringify([]))
             return
         }
 
         const items = JSON.parse(storage) as StickyNoteType[]
-        console.log('Received board', items)
+        //console.log('Received board', items)
         addMemoryState(items)
         stickyNotesSet(items)
     }
 
-    async function saveBoard(stickyNotesList: StickyNoteType[]){
+    async function saveBoard(stickyNotesList: StickyNoteType[]) {
         localStorage.setItem("board", JSON.stringify(stickyNotesList))
-        console.log('Saved board', stickyNotesList)
+        //console.log('Saved board', stickyNotesList)
     }
 
     useEffect(() => {
@@ -197,36 +205,40 @@ const StickyBoard = () => {
     }, [])
 
     useEffect(() => {
-        if(stickyNotes)
+        if (stickyNotes)
             saveBoard(stickyNotes)
     }, [stickyNotes])
 
     //? NOTES ?
-    function addNote(position?: {x: number, y: number}){
+    function addNote(position?: { x: number, y: number }) {
         console.log(position)
-        const posObject = {x: position ? position.x : 0, y: position? position.y : 0}
+        const posObject = { x: position ? position.x : 0, y: position ? position.y : 0 }
         console.log(posObject)
 
         const id = stickyNotes[stickyNotes.length - 1] ? stickyNotes[stickyNotes.length - 1].id + 1 : 0;
         const pinColorHue = Math.floor(Math.random() * (360 - 0 + 1) + 0)
-        stickyNotesSet([...stickyNotes, {...posObject, id: id, content: "", color: "yellow", pinColorHue: pinColorHue}])
+
+        const notesArray = [...stickyNotes, { ...posObject, id: id, content: "", color: "yellow", pinColorHue: pinColorHue }]
+
+        stickyNotesSet(notesArray)
+        addMemoryState(notesArray)
     }
 
-    function updateNote(updatedNote: StickyNoteType){
+    function updateNote(updatedNote: StickyNoteType) {
         const updatedNotes = stickyNotes.map(item => (item.id === updatedNote.id ? updatedNote : item));
 
         addMemoryState(updatedNotes)
         stickyNotesSet(updatedNotes)
     }
 
-    function deleteNote(noteId: number){
+    function deleteNote(noteId: number) {
         const updatedNotes = stickyNotes.filter(p => p.id !== noteId)
         addMemoryState(updatedNotes)
         stickyNotesSet(updatedNotes)
     }
 
-    function arrangeNotes(){
-        let currentArray =stickyNotes;
+    function arrangeNotes() {
+        let currentArray = stickyNotes;
         let currentBoundaries = { x: 0, y: 0 };
         const noteMargin = 5;
 
@@ -241,24 +253,24 @@ const StickyBoard = () => {
             const index = currentArray.findIndex(p => p.id === id);
             currentArray[index].x = currentBoundaries.x
             currentArray[index].y = currentBoundaries.y
-            
+
             const newYBoundary = currentBoundaries.y + noteSizes.height + noteMargin;
-            if(newYBoundary >= boardSizes.height){
+            if (newYBoundary >= boardSizes.height) {
                 currentBoundaries.y = 0;
                 currentBoundaries.x = currentBoundaries.x + noteSizes.width + noteMargin
 
                 currentArray[index].x = currentBoundaries.x
                 currentArray[index].y = currentBoundaries.y
-                return {...currentArray[index]}
+                return { ...currentArray[index] }
             }
 
-            if(currentBoundaries.x >= boardSizes.width){
+            if (currentBoundaries.x >= boardSizes.width) {
                 console.error("Too many notes!")
-                return {...currentArray[index]}
+                return { ...currentArray[index] }
             }
 
             currentBoundaries.y = newYBoundary
-            const updatedNote = {...currentArray[index]}
+            const updatedNote = { ...currentArray[index] }
             return updatedNote
         });
 
@@ -271,17 +283,17 @@ const StickyBoard = () => {
         <>
             <Transition in={contextMenuData.visible} timeout={90} mountOnEnter unmountOnExit>
                 {(state) => (
-                    <ContextMenu items={contextMenuData.menuData} ref={contextMenuRef} style={{top: contextMenuData.position.y, left: contextMenuData.position.x}} className={"context-transition-" + state}/>
+                    <ContextMenu items={contextMenuData.menuData} ref={contextMenuRef} style={{ top: contextMenuData.position.y, left: contextMenuData.position.x }} className={"context-transition-" + state} />
                 )}
             </Transition>
 
             <Transition in={clearConfirmation} timeout={290} mountOnEnter unmountOnExit>
                 {(state) => (
-                    <Modal 
-                        title="Clearing board" 
-                        content="Are you sure you want to clear the board?" 
-                        confirm={{text: "Cancel", onClick: () => {clearConfirmationSet(false)}}} 
-                        cancel={{text: "Clear", onClick: () => {clearBoard(); clearConfirmationSet(false)}}} 
+                    <Modal
+                        title="Clearing board"
+                        content="Are you sure you want to clear the board?"
+                        confirm={{ text: "Cancel", onClick: () => { clearConfirmationSet(false) } }}
+                        cancel={{ text: "Clear", onClick: () => { clearBoard(); clearConfirmationSet(false) } }}
                         className={"modal-transition-" + state}
                     />
                 )}
@@ -289,7 +301,7 @@ const StickyBoard = () => {
             <section className="sticky__board">
                 <div className="action__menu">
                     <button onClick={() => addNote()} aria-label="Add note" title="Add note">+</button>
-                    <button onClick={() => {clearConfirmationSet(true)}} className="cancel" aria-label="Clear the board" title="Clear the board"><Trash /></button>
+                    <button onClick={() => { clearConfirmationSet(true) }} className="cancel" aria-label="Clear the board" title="Clear the board"><Trash /></button>
                     <button onClick={() => arrangeNotes()} aria-label="Align the notes" title="Align the notes"><AlignLeft /></button>
                 </div>
                 {/* <button onClick={revertToPreviousState}>undo</button>
@@ -299,7 +311,7 @@ const StickyBoard = () => {
                         return (
                             <Transition key={note.id} timeout={290} unmountOnExit>
                                 {(state) => (
-                                    <StickyNote note={note} updateNote={updateNote} key={note.id} className={`note-transition-${state}`}/>
+                                    <StickyNote note={note} updateNote={updateNote} key={note.id} className={`note-transition-${state}`} />
                                 )}
                             </Transition>
                         )

@@ -1,33 +1,37 @@
 import { useState } from "react";
+import type { MemoryObject, StickyNoteType } from "../../../types/StickyBoardTypes";
 
 export const useMemory = (value: any) => {
-    const [memory, setMemory] = useState([{id: 0, data: value}]);
+    const [memory, setMemory] = useState<MemoryObject[]>([{ id: 0, data: value }]);
     const [currentMemoryStateId, currentMemoryStateIdSet] = useState(0);
 
-    function getPreviousMemoryState() {
-        if(memory.length <= 1) return
-        if(currentMemoryStateId <= 1) return memory.filter(e => e.id === 1)[0].data
+    function getPreviousMemoryState(): MemoryObject | null {
+        if (memory.length <= 1) return null
+        if (currentMemoryStateId < 1) return memory[0]
 
-        const currentMemoryId = currentMemoryStateId - 1;
-        currentMemoryStateIdSet(currentMemoryId)
-        return memory.filter(e => e.id === currentMemoryId)[0].data;
+        //const currentMemoryId = currentMemoryStateId - 1;
+        //currentMemoryStateIdSet(currentMemoryId)
+        return memory.filter(e => e.id === currentMemoryStateId - 1)[0];
     }
 
-    function getForwardMemoryState(){
-        if(memory.length <= 1) return
-        if(currentMemoryStateId >= memory[memory.length - 1].id) return memory.filter(e => e.id === memory[memory.length - 1].id)[0].data
+    function getForwardMemoryState(): MemoryObject | null {
+        if (memory.length <= 1) return null
+        if (currentMemoryStateId > memory[memory.length - 1].id) return memory.filter(e => e.id === memory[memory.length - 1].id)[0]
 
-        const currentMemoryId = currentMemoryStateId + 1;
-        currentMemoryStateIdSet(currentMemoryId)
-        return memory.filter(e => e.id === currentMemoryId)[0].data;
+        //const currentMemoryId = currentMemoryStateId + 1;
+        //currentMemoryStateIdSet(currentMemoryId)
+        return memory.filter(e => e.id === currentMemoryStateId + 1)[0];
     }
 
-    function addMemoryState(value: any) {
-        const id = memory[memory.length - 1].id + 1;
-        console.log('addMemoryState', {id: id, data: value})
-        setMemory([...memory, {id: id, data: value}])
+    function addMemoryState(value: StickyNoteType[]) {
+        const id = currentMemoryStateId + 1;
+        console.log('addMemoryState', { id: id, data: value })
+
+        const slicedMemory = memory.slice(0, id);
+
+        setMemory([...slicedMemory, { id: id, data: value }])
         currentMemoryStateIdSet(id)
     }
 
-    return {memory, getPreviousMemoryState, getForwardMemoryState, addMemoryState};
+    return { memory, getPreviousMemoryState, getForwardMemoryState, addMemoryState, currentMemoryStateId, currentMemoryStateIdSet };
 }

@@ -6,3 +6,8 @@ export type StickyNoteType = {
     y?: number;
     pinColorHue?: number
 }
+
+export type MemoryObject = {
+    id: number,
+    data: StickyNoteType[]
+}
