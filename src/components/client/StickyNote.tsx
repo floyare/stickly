@@ -3,14 +3,23 @@ import Draggable from 'react-draggable';
 import type { StickyNoteType } from "../../types/StickyBoardTypes";
 import Animated from "./Animated";
 
-const StickyNote = ({note, updateNote, className}: {note: StickyNoteType, updateNote: (note: StickyNoteType) => void, className?: string}) => {
-    const [position, positionSet] = useState<{x: number, y: number}>({x: note.x ? note.x : 0, y: note.y ? note.y : 0})
-    const [content, contentSet] = useState(note.content)
-    const [editMode, editModeSet] = useState(false)
+type Props = {
+    note: StickyNoteType,
+    updateNote: (note: StickyNoteType) => void,
+    className?: string,
+    currentHighestZIndex: number,
+    currentHighestZIndexSet: React.Dispatch<React.SetStateAction<number>>,
+}
+
+const StickyNote = ({ note, updateNote, className, currentHighestZIndex, currentHighestZIndexSet }: Props) => {
+    const [position, positionSet] = useState<{ x: number, y: number }>({ x: note.x ? note.x : 0, y: note.y ? note.y : 0 });
+    const [content, contentSet] = useState(note.content);
+    const [editMode, editModeSet] = useState(false);
     const textRef = useRef<any>();
     const isContentUpdated = useRef(false);
+    const [showPin, showPinSet] = useState(true);
 
-    const [showPin, showPinSet] = useState(true)
+    const localZIndex = useRef(note.zIndex ? note.zIndex : currentHighestZIndex + 1);
 
     useEffect(() => {
         positionSet({
@@ -18,63 +27,76 @@ const StickyNote = ({note, updateNote, className}: {note: StickyNoteType, update
             y: note.y !== undefined ? note.y : 0,
         });
         contentSet(note.content);
-    }, [note])
+    }, [note]);
 
     const onStop = () => {
-        updateNote({...note, x: position.x, y: position.y})
-        showPinSet(true)
-    }
+        updateNote({ ...note, x: position.x, y: position.y });
+        showPinSet(true);
+    };
 
     const onStart = () => {
-        showPinSet(false)
-    }
+        showPinSet(false);
+    };
 
     const onDrag = (e: any, position: any) => {
-        //console.log(e, ui)
-        positionSet({x: position.x, y: position.y})
-    }
+        positionSet({ x: position.x, y: position.y });
+    };
 
-    function updateTextHeight(e: any){
+    function updateTextHeight(e: any) {
         textRef.current.style.height = e.target.scrollHeight + 'px';
     }
 
+    const handleFocus = () => {
+        const currentHighest = currentHighestZIndex
+        if (currentHighest !== localZIndex.current || currentHighest == 1) {
+            currentHighestZIndexSet(p => {
+                const newZIndex = p + 1;
+                updateNote({
+                    ...note,
+                    zIndex: newZIndex
+                });
+                localZIndex.current = newZIndex;
+                return newZIndex;
+            });
+        }
+    };
+
     useEffect(() => {
         if (isContentUpdated.current) {
-            //TODO: DEBOUNCE
-            updateNote({...note, content: content})
+            updateNote({ ...note, content: content });
             isContentUpdated.current = false;
         }
-    }, [content])
+    }, [content]);
 
     return (
-            <Draggable /*grid={[100,100]}*/ bounds="parent" onStop={onStop} onDrag={onDrag} onStart={onStart} handle=".dragger" position={{x: position.x, y: position.y}}>
-                    {/* @ts-ignore */}
-                    <div className={"sticky__note " + className} style={{'--initial-transform': `translate(${position.x}px, ${position.y}px)`}} id={"note__" + note.id}>
-                        <Animated classProp="pin-transition" inProp={showPin} timeout={0}>
-                            <img className="pin" style={{filter: `hue-rotate(${note.pinColorHue}deg)`,}} src="./pin3.png" />
-                        </Animated>
+        <Draggable bounds="parent" onStop={onStop} onDrag={onDrag} onStart={onStart} onMouseDown={handleFocus} handle=".dragger" position={{ x: position.x, y: position.y }}>
+            {/* @ts-ignore */}
+            <div className={"sticky__note " + className} style={{ '--initial-transform': `translate(${position.x}px, ${position.y}px)`, zIndex: localZIndex.current }} id={"note__" + note.id}>
+                <Animated classProp="pin-transition" inProp={showPin} timeout={0}>
+                    <img className="pin" style={{ filter: `hue-rotate(${note.pinColorHue}deg)`, }} src="./pin3.png" />
+                </Animated>
 
-                        <div className="dragger"></div>
-                        <div className="content">
-                            {!editMode && <p onDoubleClick={() => {editModeSet(true)}}>
-                                {content ? content : <span>Double click here to change content of this note...</span>}
-                            </p>}
-                            {editMode && <textarea 
-                                value={content} 
-                                ref={textRef}
-                                onMouseEnter={updateTextHeight}
-                                spellCheck="false"
-                                onChange={(e) => {
-                                    updateTextHeight(e)
-                                    contentSet(e.target.value)
-                                    isContentUpdated.current = true;
-                                }} 
-                                onBlur={() => editModeSet(false)}>
-                            </textarea>}
-                        </div>
-                    </div>   
-            </Draggable>    
+                <div className="dragger"></div>
+                <div className="content">
+                    {!editMode && <p onDoubleClick={() => { editModeSet(true) }}>
+                        {content ? content : <span>Double click here to change content of this note...</span>}
+                    </p>}
+                    {editMode && <textarea
+                        value={content}
+                        ref={textRef}
+                        onMouseEnter={updateTextHeight}
+                        spellCheck="false"
+                        onChange={(e) => {
+                            updateTextHeight(e);
+                            contentSet(e.target.value);
+                            isContentUpdated.current = true;
+                        }}
+                        onBlur={() => editModeSet(false)}>
+                    </textarea>}
+                </div>
+            </div>
+        </Draggable>
     );
 }
- 
+
 export default StickyNote;

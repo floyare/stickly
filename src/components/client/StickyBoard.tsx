@@ -16,6 +16,7 @@ const StickyBoard = () => {
     const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([]);
     const { memory, getPreviousMemoryState, getForwardMemoryState, addMemoryState, currentMemoryStateId, currentMemoryStateIdSet } = useMemory([])
     const [clearConfirmation, clearConfirmationSet] = useState(false);
+    const [currentHighestZIndex, currentHighestZIndexSet] = useState(1);
 
     const defaultContextMenuBoardItems: ContextMenuType[] = [
         {
@@ -218,7 +219,16 @@ const StickyBoard = () => {
         const id = stickyNotes[stickyNotes.length - 1] ? stickyNotes[stickyNotes.length - 1].id + 1 : 0;
         const pinColorHue = Math.floor(Math.random() * (360 - 0 + 1) + 0)
 
-        const notesArray = [...stickyNotes, { ...posObject, id: id, content: "", color: "yellow", pinColorHue: pinColorHue }]
+        const notesArray = [...stickyNotes,
+        {
+            ...posObject,
+            id: id,
+            content: "",
+            color: "yellow",
+            pinColorHue: pinColorHue,
+            zIndex: 1
+        }
+        ]
 
         stickyNotesSet(notesArray)
         addMemoryState(notesArray)
@@ -311,7 +321,14 @@ const StickyBoard = () => {
                         return (
                             <Transition key={note.id} timeout={290} unmountOnExit>
                                 {(state) => (
-                                    <StickyNote note={note} updateNote={updateNote} key={note.id} className={`note-transition-${state}`} />
+                                    <StickyNote
+                                        note={note}
+                                        updateNote={updateNote}
+                                        key={note.id}
+                                        className={`note-transition-${state}`}
+                                        currentHighestZIndex={currentHighestZIndex}
+                                        currentHighestZIndexSet={currentHighestZIndexSet}
+                                    />
                                 )}
                             </Transition>
                         )

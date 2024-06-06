@@ -1,11 +1,11 @@
 export type ContextMenuActionButton = {
     content: string,
     className?: string,
-    icon?: any
+    icon?: any,
 }
 
 export type ContextMenuType = {
-    button: ContextMenuActionButton, 
-    onClick?: (noteId?: number) => void, 
+    button: ContextMenuActionButton,
+    onClick?: (noteId?: number) => void,
     isDisabled?: boolean
 }

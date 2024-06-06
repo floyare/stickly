@@ -4,7 +4,8 @@ export type StickyNoteType = {
     color: string;
     x?: number;
     y?: number;
-    pinColorHue?: number
+    pinColorHue?: number,
+    zIndex?: number
 }
 
 export type MemoryObject = {
