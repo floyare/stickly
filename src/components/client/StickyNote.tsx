@@ -71,7 +71,7 @@ const StickyNote = ({ note, updateNote, className, currentHighestZIndex, current
     return (
         <Draggable bounds="parent" onStop={onStop} onDrag={onDrag} onStart={onStart} onMouseDown={handleFocus} handle=".dragger" position={{ x: position.x, y: position.y }}>
             {/* @ts-ignore */}
-            <div className={"sticky__note " + className} style={{ '--initial-transform': `translate(${position.x}px, ${position.y}px)`, zIndex: localZIndex.current }} id={"note__" + note.id}>
+            <div className={"sticky__note " + className} style={{ '--initial-transform': `translate(${position.x}px, ${position.y}px)`, zIndex: note.zIndex }} id={"note__" + note.id}>
                 <Animated classProp="pin-transition" inProp={showPin} timeout={0}>
                     <img className="pin" style={{ filter: `hue-rotate(${note.pinColorHue}deg)`, }} src="./pin3.png" />
                 </Animated>

@@ -183,6 +183,7 @@ const StickyBoard = () => {
         localStorage.setItem("board", JSON.stringify([]))
     }
 
+    //TODO: po zaladowaniu kazdy note ma zindex 2 przez co nie dziala incrementowanie
     async function loadSavedBoard() {
         const storage = await localStorage.getItem("board");
         if (!storage) {
