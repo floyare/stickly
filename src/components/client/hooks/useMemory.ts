@@ -25,7 +25,7 @@ export const useMemory = (value: any) => {
 
     function addMemoryState(value: StickyNoteType[]) {
         const id = currentMemoryStateId + 1;
-        console.log('addMemoryState', { id: id, data: value[0].zIndex })
+        console.log('addMemoryState', { id: id, data: value })
 
         const slicedMemory = memory.slice(0, id);
 

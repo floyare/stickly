@@ -183,7 +183,6 @@ const StickyBoard = () => {
         localStorage.setItem("board", JSON.stringify([]))
     }
 
-    //TODO: po zaladowaniu kazdy note ma zindex 2 przez co nie dziala incrementowanie
     async function loadSavedBoard() {
         const storage = await localStorage.getItem("board");
         if (!storage) {
@@ -192,14 +191,14 @@ const StickyBoard = () => {
         }
 
         const items = JSON.parse(storage) as StickyNoteType[]
-        //console.log('Received board', items)
+        console.log('Received board', items)
         addMemoryState(items)
         stickyNotesSet(items)
     }
 
     async function saveBoard(stickyNotesList: StickyNoteType[]) {
         localStorage.setItem("board", JSON.stringify(stickyNotesList))
-        //console.log('Saved board', stickyNotesList)
+        console.log('Saved board', stickyNotesList)
     }
 
     useEffect(() => {
@@ -207,8 +206,10 @@ const StickyBoard = () => {
     }, [])
 
     useEffect(() => {
-        if (stickyNotes)
+        if (stickyNotes) {
             saveBoard(stickyNotes)
+            currentHighestZIndexSet(Math.max(...stickyNotes.map(note => note.zIndex || 0)))
+        }
     }, [stickyNotes])
 
     //? NOTES ?
