@@ -1,14 +1,14 @@
 @import "_globals.scss";
 
-.page__board{
+.page__board {
     padding: 20px;
-    h1{
+    h1 {
         font-size: 72px;
         font-weight: 700;
     }
 }
 
-.sticky__board{
+.sticky__board {
     position: relative;
     background-color: $CL_BACKGROUND;
     width: 100%;
@@ -19,13 +19,13 @@
     background-size: 40px 40px;
     background-position: 0px 0px;
     border-radius: $GLOBAL_BORDER_RADIUS;
-   //overflow: hidden;
+    //overflow: hidden;
     z-index: 0;
-    .notes{
+    .notes {
         height: 100%;
     }
-    .action__menu{
-        position:absolute;
+    .action__menu {
+        position: absolute;
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
@@ -37,12 +37,12 @@
         border-top-left-radius: $GLOBAL_BORDER_RADIUS;
         border-top-right-radius: $GLOBAL_BORDER_RADIUS;
         border: 1px solid lighten($CL_BACKGROUND, 10);
-        border-bottom:0px !important;
+        border-bottom: 0px !important;
         box-shadow:
-          0 1px 1px rgba(0, 0, 0, 0.2),
-          0 2px 0 0 rgba($CL_BACKGROUND, .7) inset;
+            0 1px 1px rgba(0, 0, 0, 0.2),
+            0 2px 0 0 rgba($CL_BACKGROUND, 0.7) inset;
         padding: 15px;
-        button{
+        button {
             border: none;
             color: $CL_TEXT;
             // background-color: lighten($CL_BACKGROUND, 5);
@@ -60,7 +60,7 @@
         }
     }
 
-    .background__tip{
+    .background__tip {
         position: absolute;
         bottom: 15px;
         left: 15px;
@@ -68,14 +68,14 @@
         border-radius: $GLOBAL_BORDER_RADIUS;
         border: 1px solid lighten($CL_BACKGROUND, 10);
         box-shadow:
-          0 1px 1px rgba(0, 0, 0, 0.2),
-          0 2px 0 0 rgba($CL_BACKGROUND, .7) inset;
+            0 1px 1px rgba(0, 0, 0, 0.2),
+            0 2px 0 0 rgba($CL_BACKGROUND, 0.7) inset;
         padding: 15px;
         z-index: -1;
     }
 }
 
-.sticky__note{
+.sticky__note {
     background-color: $CL_PRIMARY;
     width: 250px;
     min-height: 100px;
@@ -85,7 +85,7 @@
     //animation: fadeIn 0.4s ease-in-out;
     // border-radius: 5px;
     // overflow: hidden;
-    .pin{
+    .pin {
         position: absolute;
         top: -30px;
         left: 50%;
@@ -95,16 +95,16 @@
         transform: translateX(-50%);
         user-select: none;
     }
-    .content{
+    .content {
         padding: 10px;
         //padding: 5px 10px;
-        // line-height: 1.1em; 
+        // line-height: 1.1em;
         font-size: 24px;
         // background:
         //   repeating-linear-gradient(to bottom,transparent 0 calc(1.4em - 1px), #8b835349 0 1.4em)
         //    0 0/100% calc(100% - 1em);
         // height: 100%;
-        textarea{
+        textarea {
             font-size: 24px;
             background-color: $CL_PRIMARY;
             outline: none;
@@ -116,19 +116,21 @@
             height: inherit;
             resize: none;
         }
-        span{
+        span {
             font-size: 18px;
             color: #736b40e7;
+            user-select: none;
         }
-        p{
+        p {
             //text-decoration: underline;
             //text-decoration-color: #8b835349;
             outline: none;
             white-space: pre-line;
             color: black;
+            cursor: text;
         }
     }
-    .dragger{
+    .dragger {
         background-color: darken($CL_PRIMARY, 10);
         height: 20px;
         width: 100%;

@@ -16,6 +16,7 @@ const StickyNote = ({ note, updateNote, className, currentHighestZIndex, current
     const [content, contentSet] = useState(note.content);
     const [editMode, editModeSet] = useState(false);
     const textRef = useRef<any>();
+    const paragraphRef = useRef<HTMLParagraphElement>(null);
     const isContentUpdated = useRef(false);
     const [showPin, showPinSet] = useState(true);
 
@@ -68,6 +69,12 @@ const StickyNote = ({ note, updateNote, className, currentHighestZIndex, current
         }
     }, [content]);
 
+    useEffect(() => {
+        if (editMode) {
+            textRef.current.focus();
+        }
+    }, [editMode])
+
     return (
         <Draggable bounds="parent" onStop={onStop} onDrag={onDrag} onStart={onStart} onMouseDown={handleFocus} handle=".dragger" position={{ x: position.x, y: position.y }}>
             {/* @ts-ignore */}
@@ -78,7 +85,7 @@ const StickyNote = ({ note, updateNote, className, currentHighestZIndex, current
 
                 <div className="dragger"></div>
                 <div className="content">
-                    {!editMode && <p onDoubleClick={() => { editModeSet(true) }}>
+                    {!editMode && <p ref={paragraphRef} onDoubleClick={() => { editModeSet(true) }}>
                         {content ? content : <span>Double click here to change content of this note...</span>}
                     </p>}
                     {editMode && <textarea
