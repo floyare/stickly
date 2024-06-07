@@ -191,14 +191,14 @@ const StickyBoard = () => {
         }
 
         const items = JSON.parse(storage) as StickyNoteType[]
-        console.log('Received board', items)
+        //console.log('Received board', items)
         addMemoryState(items)
         stickyNotesSet(items)
     }
 
     async function saveBoard(stickyNotesList: StickyNoteType[]) {
         localStorage.setItem("board", JSON.stringify(stickyNotesList))
-        console.log('Saved board', stickyNotesList)
+        //console.log('Saved board', stickyNotesList)
     }
 
     useEffect(() => {
@@ -249,6 +249,7 @@ const StickyBoard = () => {
         stickyNotesSet(updatedNotes)
     }
 
+    //TODO: fix bug gdzie po zarrangowaniu dodaje memoryState ale modyfikuje kazda data w memory
     function arrangeNotes() {
         let currentArray = stickyNotes;
         let currentBoundaries = { x: 0, y: 0 };
@@ -265,6 +266,7 @@ const StickyBoard = () => {
             const index = currentArray.findIndex(p => p.id === id);
             currentArray[index].x = currentBoundaries.x
             currentArray[index].y = currentBoundaries.y
+            currentArray[index].zIndex = index + 1
 
             const newYBoundary = currentBoundaries.y + noteSizes.height + noteMargin;
             if (newYBoundary >= boardSizes.height) {
@@ -285,6 +287,8 @@ const StickyBoard = () => {
             const updatedNote = { ...currentArray[index] }
             return updatedNote
         });
+
+        console.log('updated to', updatedNotes)
 
         addMemoryState(updatedNotes)
         stickyNotesSet(updatedNotes)
