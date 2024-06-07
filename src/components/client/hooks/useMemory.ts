@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { MemoryObject, StickyNoteType } from "../../../types/StickyBoardTypes";
 
 export const useMemory = (value: any) => {
-    const [memory, setMemory] = useState<MemoryObject[]>([{ id: 0, data: value }]);
+    const [memory, setMemory] = useState<MemoryObject[]>([/*{ id: 0, data: value }*/]);
     const [currentMemoryStateId, currentMemoryStateIdSet] = useState(0);
 
     function getPreviousMemoryState(): MemoryObject | null {
@@ -27,9 +27,10 @@ export const useMemory = (value: any) => {
         const id = currentMemoryStateId + 1;
         console.log('addMemoryState', { id: id, data: value })
 
+        const newMemoryState = { id: id, data: JSON.parse(JSON.stringify(value)) };
         const slicedMemory = memory.slice(0, id);
 
-        setMemory([...slicedMemory, { id: id, data: value }])
+        setMemory([...slicedMemory, newMemoryState])
         currentMemoryStateIdSet(id)
     }
 
