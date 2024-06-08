@@ -5,7 +5,7 @@ import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react()],
-  output: "server",
-  adapter: cloudflare()
+    integrations: [react()],
+    output: "server",
+    adapter: cloudflare()
 });

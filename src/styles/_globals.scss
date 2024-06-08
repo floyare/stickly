@@ -1,6 +1,6 @@
 $CL_BACKGROUND: #13151a;
 $CL_PRIMARY: #f8da19;
-$CL_PRIMARY_DARK:#baa51e;
+$CL_PRIMARY_DARK: #baa51e;
 $CL_TEXT: #fff;
 
 $CL_SUCCESS: rgb(90, 186, 45);
@@ -8,62 +8,75 @@ $CL_ERROR: #f83b19;
 
 $GLOBAL_BORDER_RADIUS: 15px;
 
-*{
+* {
     padding: 0;
     margin: 0;
     scroll-behavior: smooth;
     box-sizing: border-box;
     //font-family: 'Afacad', sans-serif;
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
 }
 
-html, body{
+html,
+body {
     height: 100%;
     background-color: $CL_BACKGROUND;
 }
 
-main{
+main {
     width: 100%;
     height: 100%;
 }
 
-h1{
+h1 {
     color: $CL_TEXT;
 }
 
-p{
+p {
     color: darken($CL_TEXT, 10);
 }
 
-button{
+button,
+.button__link {
     background-color: lighten($CL_BACKGROUND, 5);
     box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.372);
     border: 1px solid lighten($CL_BACKGROUND, 10);
     color: $CL_TEXT;
     padding: 5px 15px;
     font-size: 18px;
+    display: flex;
+    align-items: center;
     cursor: pointer;
     border-radius: $GLOBAL_BORDER_RADIUS;
-    transition: transform .1s ease-in-out, box-shadow .1s ease-in-out, background-color .1s ease-in-out;
-    &:active{
+    transition:
+        transform 0.1s ease-in-out,
+        box-shadow 0.1s ease-in-out,
+        background-color 0.1s ease-in-out;
+    &:active {
         background-color: lighten($CL_BACKGROUND, 2) !important;
         transform: translate(2px, 2px);
         box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.372);
-        transition: transform .1s ease-in-out, box-shadow .1s ease-in-out, background-color .1s ease-in-out;
+        transition:
+            transform 0.1s ease-in-out,
+            box-shadow 0.1s ease-in-out,
+            background-color 0.1s ease-in-out;
     }
-    &:hover{
+    &:hover {
         background-color: lighten($CL_BACKGROUND, 15);
-        transition: transform .1s ease-in-out, box-shadow .1s ease-in-out, background-color .1s ease-in-out;
+        transition:
+            transform 0.1s ease-in-out,
+            box-shadow 0.1s ease-in-out,
+            background-color 0.1s ease-in-out;
     }
-    &.confirm{
-       //background-color: $CL_SUCCESS;
+    &.confirm {
+        //background-color: $CL_SUCCESS;
     }
-    &.cancel{
+    &.cancel {
         background-color: $CL_ERROR !important;
     }
 }
 
-.context__menu{
+.context__menu {
     background-color: lighten($CL_BACKGROUND, 5);
     box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.372);
     border: 1px solid lighten($CL_BACKGROUND, 25);
@@ -71,14 +84,14 @@ button{
     width: 150px;
     height: auto;
     font-size: 14px;
-    position :absolute;
+    position: absolute;
     padding: 10px 5px;
     z-index: 150;
     display: flex;
     flex-direction: column;
     user-select: none;
     gap: 10px;
-    button{
+    button {
         width: 100%;
         display: flex;
         justify-content: center;
@@ -95,8 +108,8 @@ kbd {
     border-radius: 3px;
     border: 1px solid lighten($CL_BACKGROUND, 10);
     box-shadow:
-      0 1px 1px rgba(0, 0, 0, 0.2),
-      0 2px 0 0 rgba($CL_BACKGROUND, .7) inset;
+        0 1px 1px rgba(0, 0, 0, 0.2),
+        0 2px 0 0 rgba($CL_BACKGROUND, 0.7) inset;
     color: lighten($CL_BACKGROUND, 35);
     display: inline-block;
     font-size: 0.85em;
@@ -104,71 +117,86 @@ kbd {
     line-height: 1;
     padding: 2px 4px;
     white-space: nowrap;
-  }
+}
 
 @keyframes fadeIn {
-    from{
+    from {
         transform: var(--initial-transform) scale(0);
         opacity: 0;
     }
-    to{
+    to {
         transform: var(--initial-transform) scale(1);
         opacity: 1;
     }
 }
 
 @keyframes fadeOut {
-    from{
+    from {
         transform: var(--initial-transform) scale(1);
         opacity: 1;
     }
-    to{
+    to {
         transform: var(--initial-transform) scale(0);
         opacity: 0;
     }
 }
 
 @keyframes bounceIn {
-from,
-20%,
-40%,
-60%,
-80%,
-to {
-    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    from,
+    20%,
+    40%,
+    60%,
+    80%,
+    to {
+        -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    0% {
+        opacity: 0;
+        -webkit-transform: scale3d(0.3, 0.3, 0.3);
+        transform: scale3d(0.3, 0.3, 0.3);
+    }
+
+    20% {
+        -webkit-transform: scale3d(1.1, 1.1, 1.1);
+        transform: scale3d(1.1, 1.1, 1.1);
+    }
+
+    40% {
+        -webkit-transform: scale3d(0.9, 0.9, 0.9);
+        transform: scale3d(0.9, 0.9, 0.9);
+    }
+
+    60% {
+        opacity: 1;
+        -webkit-transform: scale3d(1.03, 1.03, 1.03);
+        transform: scale3d(1.03, 1.03, 1.03);
+    }
+
+    80% {
+        -webkit-transform: scale3d(0.97, 0.97, 0.97);
+        transform: scale3d(0.97, 0.97, 0.97);
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+    }
 }
 
-0% {
-    opacity: 0;
-    -webkit-transform: scale3d(0.3, 0.3, 0.3);
-    transform: scale3d(0.3, 0.3, 0.3);
-}
-
-20% {
-    -webkit-transform: scale3d(1.1, 1.1, 1.1);
-    transform: scale3d(1.1, 1.1, 1.1);
-}
-
-40% {
-    -webkit-transform: scale3d(0.9, 0.9, 0.9);
-    transform: scale3d(0.9, 0.9, 0.9);
-}
-
-60% {
-    opacity: 1;
-    -webkit-transform: scale3d(1.03, 1.03, 1.03);
-    transform: scale3d(1.03, 1.03, 1.03);
-}
-
-80% {
-    -webkit-transform: scale3d(0.97, 0.97, 0.97);
-    transform: scale3d(0.97, 0.97, 0.97);
-}
-
-to {
-    opacity: 1;
-    -webkit-transform: scale3d(1, 1, 1);
-    transform: scale3d(1, 1, 1);
-}
+header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    kbd {
+        font-size: 24px;
+    }
+    .button__link {
+        margin-left: auto;
+        padding: 20px 20px !important;
+        font-size: 38px !important;
+        border-radius: 100% !important;
+    }
 }

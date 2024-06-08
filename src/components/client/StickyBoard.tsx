@@ -249,7 +249,6 @@ const StickyBoard = () => {
         stickyNotesSet(updatedNotes)
     }
 
-    //TODO: fix bug gdzie po zarrangowaniu dodaje memoryState ale modyfikuje kazda data w memory
     function arrangeNotes() {
         let currentArray = stickyNotes;
         let currentBoundaries = { x: 0, y: 0 };
@@ -318,7 +317,7 @@ const StickyBoard = () => {
                 <div className="action__menu">
                     <button onClick={() => addNote()} aria-label="Add note" title="Add note">+</button>
                     <button onClick={() => { clearConfirmationSet(true) }} className="cancel" aria-label="Clear the board" title="Clear the board"><Trash /></button>
-                    <button onClick={() => arrangeNotes()} aria-label="Align the notes" title="Align the notes"><AlignLeft /></button>
+                    <button onClick={() => arrangeNotes()} aria-label="Align your notes" title="Align the notes"><AlignLeft /></button>
                 </div>
                 {/* <button onClick={revertToPreviousState}>undo</button>
                 <button onClick={redoForwardState}>redo</button> */}

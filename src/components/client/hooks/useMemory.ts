@@ -2,15 +2,13 @@ import { useState } from "react";
 import type { MemoryObject, StickyNoteType } from "../../../types/StickyBoardTypes";
 
 export const useMemory = (value: any) => {
-    const [memory, setMemory] = useState<MemoryObject[]>([/*{ id: 0, data: value }*/]);
+    const [memory, setMemory] = useState<MemoryObject[]>([]);
     const [currentMemoryStateId, currentMemoryStateIdSet] = useState(0);
 
     function getPreviousMemoryState(): MemoryObject | null {
         if (memory.length <= 1) return null
         if (currentMemoryStateId < 1) return memory[0]
 
-        //const currentMemoryId = currentMemoryStateId - 1;
-        //currentMemoryStateIdSet(currentMemoryId)
         return memory.filter(e => e.id === currentMemoryStateId - 1)[0];
     }
 
@@ -18,8 +16,6 @@ export const useMemory = (value: any) => {
         if (memory.length <= 1) return null
         if (currentMemoryStateId > memory[memory.length - 1].id) return memory.filter(e => e.id === memory[memory.length - 1].id)[0]
 
-        //const currentMemoryId = currentMemoryStateId + 1;
-        //currentMemoryStateIdSet(currentMemoryId)
         return memory.filter(e => e.id === currentMemoryStateId + 1)[0];
     }
 

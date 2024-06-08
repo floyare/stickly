@@ -2,11 +2,18 @@
 import Layout from '../layouts/Layout.astro';
 import StickyBoard from "../components/client/StickyBoard"
 import "../styles/StickyBoard.scss"
+import PackageJSON from "../../package.json"
+import { GitHub } from "react-feather"
+console.log(PackageJSON)
 ---
 
 <Layout title="stickly.">
 	<main class="page__board">
-		<h1>stickly.</h1>
+        <header>
+            <h1>stickly.</h1>
+            <kbd>v{PackageJSON.version}</kbd>
+            <a href="https://github.com/floyare/stickly" class="button__link"><GitHub /></a>
+        </header>
 		<StickyBoard client:load/>
 	</main>
 </Layout>
