@@ -30,7 +30,7 @@
         left: 50%;
         transform: translateX(-50%);
         padding: 10px;
-        z-index: 5;
+        z-index: 500;
         display: flex;
         gap: 10px;
         background-color: darken($CL_BACKGROUND, 2);
@@ -126,6 +126,8 @@
             //text-decoration-color: #8b835349;
             outline: none;
             white-space: pre-line;
+            word-break: break-all;
+            text-wrap: balance;
             color: black;
             cursor: text;
         }
