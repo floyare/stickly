@@ -8,7 +8,7 @@ type Props = {
     timeout: number,
 }
 
-const Animated = ({children, inProp, timeout, classProp}: Props) => {
+const Animated = ({ children, inProp, timeout, classProp }: Props) => {
     return (
         <CSSTransition in={inProp} timeout={timeout} classNames={
             {
@@ -22,5 +22,5 @@ const Animated = ({children, inProp, timeout, classProp}: Props) => {
         </CSSTransition>
     );
 }
- 
+
 export default Animated;

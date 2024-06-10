@@ -253,6 +253,7 @@ const StickyBoard = () => {
         let currentArray = stickyNotes;
         let currentBoundaries = { x: 0, y: 0 };
         const noteMargin = 5;
+        let currentBreakColumn = false
 
         //@ts-ignore
         const boardSizes = { width: document.querySelector(".sticky__board")?.offsetWidth, height: document.querySelector(".sticky__board")?.offsetHeight }
@@ -269,11 +270,13 @@ const StickyBoard = () => {
 
             const newYBoundary = currentBoundaries.y + noteSizes.height + noteMargin;
             if (newYBoundary >= boardSizes.height) {
-                currentBoundaries.y = 0;
+                currentBoundaries.y = 0
                 currentBoundaries.x = currentBoundaries.x + noteSizes.width + noteMargin
 
                 currentArray[index].x = currentBoundaries.x
                 currentArray[index].y = currentBoundaries.y
+
+                currentBoundaries.y = noteSizes.height + noteMargin
                 return { ...currentArray[index] }
             }
 
