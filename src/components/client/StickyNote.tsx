@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type SyntheticEvent } from "react";
 import Draggable from 'react-draggable';
 import type { StickyNoteType } from "../../types/StickyBoardTypes";
 import Animated from "./Animated";
+import { useDebounce } from "./hooks/useDebounce";
 
 type Props = {
     note: StickyNoteType,
@@ -19,6 +20,7 @@ const StickyNote = ({ note, updateNote, className, currentHighestZIndex, current
     const paragraphRef = useRef<HTMLParagraphElement>(null);
     const isContentUpdated = useRef(false);
     const [showPin, showPinSet] = useState(true);
+    const noteContentDebounced = useDebounce(content, 1000)
 
     const localZIndex = useRef(note.zIndex ? note.zIndex : currentHighestZIndex + 1);
 
@@ -64,10 +66,10 @@ const StickyNote = ({ note, updateNote, className, currentHighestZIndex, current
 
     useEffect(() => {
         if (isContentUpdated.current) {
-            updateNote({ ...note, content: content });
+            updateNote({ ...note, content: noteContentDebounced });
             isContentUpdated.current = false;
         }
-    }, [content]);
+    }, [noteContentDebounced]);
 
     useEffect(() => {
         if (editMode) {
