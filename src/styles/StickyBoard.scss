@@ -76,7 +76,6 @@
 }
 
 .sticky__note {
-    background-color: $CL_PRIMARY;
     width: 250px;
     min-height: 100px;
     position: absolute;
@@ -106,7 +105,7 @@
         // height: 100%;
         textarea {
             font-size: 24px;
-            background-color: $CL_PRIMARY;
+            background-color: transparent;
             outline: none;
             text-decoration: underline;
             text-decoration-color: #8b835349;
@@ -118,7 +117,7 @@
         }
         span {
             font-size: 18px;
-            color: #736b40e7;
+            //color: #736b40e7;
             user-select: none;
         }
         p {
@@ -133,9 +132,45 @@
         }
     }
     .dragger {
-        background-color: darken($CL_PRIMARY, 10);
+        //background-color: darken($CL_PRIMARY, 10);
         height: 20px;
         width: 100%;
         cursor: grab;
+    }
+    &.yellow {
+        background-color: $CL_NOTE_YELLOW;
+        .dragger {
+            background-color: darken($CL_NOTE_YELLOW, 10);
+        }
+        span {
+            color: darken($CL_NOTE_YELLOW, 30);
+        }
+    }
+    &.blue {
+        background-color: $CL_NOTE_BLUE;
+        .dragger {
+            background-color: darken($CL_NOTE_BLUE, 10);
+        }
+        span {
+            color: darken($CL_NOTE_BLUE, 30);
+        }
+    }
+    &.red {
+        background-color: $CL_NOTE_RED;
+        .dragger {
+            background-color: darken($CL_NOTE_RED, 10);
+        }
+        span {
+            color: darken($CL_NOTE_RED, 30);
+        }
+    }
+    &.green {
+        background-color: $CL_NOTE_GREEN;
+        .dragger {
+            background-color: darken($CL_NOTE_GREEN, 10);
+        }
+        span {
+            color: darken($CL_NOTE_GREEN, 30);
+        }
     }
 }

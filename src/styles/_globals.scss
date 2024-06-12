@@ -6,6 +6,11 @@ $CL_TEXT: #fff;
 $CL_SUCCESS: rgb(90, 186, 45);
 $CL_ERROR: #f83b19;
 
+$CL_NOTE_YELLOW: #f8da19;
+$CL_NOTE_GREEN: #7dc45f;
+$CL_NOTE_BLUE: #5f9ac4;
+$CL_NOTE_RED: #c4735f;
+
 $GLOBAL_BORDER_RADIUS: 15px;
 
 * {
@@ -199,4 +204,70 @@ header {
         font-size: 38px !important;
         border-radius: 100% !important;
     }
+}
+
+.selectable {
+    position: relative;
+    button {
+        position: relative;
+    }
+    .items {
+        position: absolute;
+        bottom: 110%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: lighten($CL_BACKGROUND, 5);
+        box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.372);
+        border: 1px solid lighten($CL_BACKGROUND, 25);
+        border-radius: $GLOBAL_BORDER_RADIUS;
+        padding: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        align-items: center;
+        width: max-content !important;
+        .option {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            .colors {
+                display: flex;
+                flex-wrap: wrap;
+                max-width: 200px;
+                gap: 5px;
+                button {
+                    padding: 5px !important;
+                    width: 40px;
+                    height: 40px;
+                    svg {
+                        filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.588));
+                    }
+                    &.yellow {
+                        background-color: $CL_NOTE_YELLOW;
+                    }
+                    &.red {
+                        background-color: $CL_NOTE_RED;
+                    }
+                    &.green {
+                        background-color: $CL_NOTE_GREEN;
+                    }
+                    &.blue {
+                        background-color: $CL_NOTE_BLUE;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.badge {
+    position: absolute;
+    bottom: 70%;
+    left: 60%;
+    background-color: #f83b19;
+    font-size: 16px;
+    color: $CL_TEXT;
+    font-weight: 900;
+    padding: 5px;
 }
