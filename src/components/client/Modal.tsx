@@ -2,9 +2,9 @@ import "../../styles/Modal.scss"
 
 type Props = {
     title: string,
-    content: string,
-    confirm?: {text: string, onClick: () => void},
-    cancel?: {text: string, onClick: () => void},
+    content: any,
+    confirm?: { text: string, onClick: () => void },
+    cancel?: { text: string, onClick: () => void },
     className?: string
 }
 
@@ -14,11 +14,11 @@ const Modal = (props: Props) => {
             <div className="modal__box">
                 <h2 className="modal__title">{props.title}</h2>
                 <div className="content">
-                    <p>{props.content}</p>
+                    {props.content}
                 </div>
                 <div className="actions">
-                    <button className="confirm" onClick={props.confirm?.onClick}>{props.confirm?.text}</button>
-                    <button className="cancel" onClick={props.cancel?.onClick}>{props.cancel?.text}</button>
+                    {props.confirm && <button className="confirm" onClick={props.confirm?.onClick}>{props.confirm?.text}</button>}
+                    {props.cancel && <button className="cancel" onClick={props.cancel?.onClick}>{props.cancel?.text}</button>}
                 </div>
             </div>
         </div>

@@ -1,0 +1,17 @@
+{
+    "versions": [
+        {
+            "version": "0.0.2",
+            "description": "First minor update with new features and improvements. Thank you guys for your feedback!",
+            "image": "/changelog2.png",
+            "changes": [
+                "Fixed notes arranging option",
+                "Optimized board saving process",
+                "UI Fixes and improvements",
+                "Added Toast notifications",
+                "Added changelog modals",
+                "Added settings with default note color change option"
+            ]
+        }
+    ]
+}

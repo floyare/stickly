@@ -1,22 +1,33 @@
-//import Styles from "../../styles/StickyBoard.module.scss"
 import { useState, useEffect, useRef } from "react";
-// import "../../styles/StickyBoard.scss";
 import StickyNote from "./StickyNote";
 import type { StickyNoteType } from "../../types/StickyBoardTypes";
 import { useMemory } from "./hooks/useMemory";
 import BackgroundTip from "./BackgroundTip";
 import Modal from "./Modal";
-import { AlignLeft, ArrowLeftCircle, ArrowRightCircle, Plus, Trash } from "react-feather"
+import { AlignLeft, ArrowLeftCircle, ArrowRightCircle, Check, Plus, Settings, Trash } from "react-feather"
 import { Transition, TransitionGroup } from "react-transition-group";
 import "../../styles/Transitions.scss"
 import ContextMenu from "./ContextMenu";
 import type { ContextMenuType } from "../../types/ContextMenuTypes";
+import toast from "react-hot-toast";
+import PackageJSON from "../../../package.json"
+import { DefaultNoteColors, type BoardOptionsType, type ChangelogVersionType, type NoteColors } from "../../types/AppTypes";
+import Selectable from "./Selectable";
+import useLocalStorage from "./hooks/useLocalStorage";
+import Badge from "./Badge";
 
 const StickyBoard = () => {
     const [stickyNotes, stickyNotesSet] = useState<StickyNoteType[]>([]);
     const { memory, getPreviousMemoryState, getForwardMemoryState, addMemoryState, currentMemoryStateId, currentMemoryStateIdSet } = useMemory([])
     const [clearConfirmation, clearConfirmationSet] = useState(false);
     const [currentHighestZIndex, currentHighestZIndexSet] = useState(1);
+
+    const [changelogShow, changelogShowSet] = useState(false);
+    const [changelogContent, changelogContentSet] = useState<ChangelogVersionType | null>(null);
+
+    const [boardOptions, boardOptionsSet] = useLocalStorage<BoardOptionsType>("board-options", {
+        defaultNoteColor: "yellow",
+    });
 
     const defaultContextMenuBoardItems: ContextMenuType[] = [
         {
@@ -60,6 +71,7 @@ const StickyBoard = () => {
         console.log('undo to:', previousMemoryState.id)
         console.log(previousMemoryState)
         stickyNotesSet(previousMemoryState.data)
+        toast('Undo done', { icon: "⬅️" })
     }
 
     function redoForwardState() {
@@ -70,11 +82,8 @@ const StickyBoard = () => {
         console.log('redo to:', forwardMemoryState.id)
         console.log(forwardMemoryState)
         stickyNotesSet(forwardMemoryState.data)
+        toast('Redo done', { icon: "➡️" })
     }
-
-    useEffect(() => {
-        console.log('currentMemory', memory)
-    }, [memory])
 
     useEffect(() => {
         const handleUndo = (event: KeyboardEvent) => {
@@ -181,6 +190,7 @@ const StickyBoard = () => {
     function clearBoard() {
         stickyNotesSet([]);
         localStorage.setItem("board", JSON.stringify([]))
+        toast('Board cleared!', { icon: "🧹" })
     }
 
     async function loadSavedBoard() {
@@ -226,7 +236,7 @@ const StickyBoard = () => {
             ...posObject,
             id: id,
             content: "",
-            color: "yellow",
+            color: boardOptions.defaultNoteColor ?? "yellow" as NoteColors,
             pinColorHue: pinColorHue,
             zIndex: 1
         }
@@ -247,17 +257,15 @@ const StickyBoard = () => {
         const updatedNotes = stickyNotes.filter(p => p.id !== noteId)
         addMemoryState(updatedNotes)
         stickyNotesSet(updatedNotes)
+        toast('Note deleted!', { icon: "🗑️" })
     }
 
     function arrangeNotes() {
         let currentArray = stickyNotes;
         let currentBoundaries = { x: 0, y: 0 };
         const noteMargin = 5;
-        let currentBreakColumn = false
 
-        //@ts-ignore
-        const boardSizes = { width: document.querySelector(".sticky__board")?.offsetWidth, height: document.querySelector(".sticky__board")?.offsetHeight }
-
+        const boardSizes = { width: document.querySelector(".sticky__board")!.getBoundingClientRect().width, height: document.querySelector(".sticky__board")!.getBoundingClientRect().height }
         const updatedNotes = currentArray.map(note => {
             const id = note.id;
             //@ts-ignore
@@ -268,20 +276,27 @@ const StickyBoard = () => {
             currentArray[index].y = currentBoundaries.y
             currentArray[index].zIndex = index + 1
 
+            const newXBoundary = currentBoundaries.x + noteSizes.width + noteMargin
+
+            if (newXBoundary >= boardSizes.width) {
+                console.error("Too many notes!")
+                currentBoundaries.x = 0
+
+                currentArray[index].x = currentBoundaries.x
+                currentArray[index].y = currentBoundaries.y
+
+                return { ...currentArray[index] }
+            }
+
             const newYBoundary = currentBoundaries.y + noteSizes.height + noteMargin;
             if (newYBoundary >= boardSizes.height) {
                 currentBoundaries.y = 0
-                currentBoundaries.x = currentBoundaries.x + noteSizes.width + noteMargin
+                currentBoundaries.x = (currentBoundaries.x + (noteSizes.width * 2) + noteMargin) >= boardSizes.width ? 0 : newXBoundary
 
                 currentArray[index].x = currentBoundaries.x
                 currentArray[index].y = currentBoundaries.y
 
                 currentBoundaries.y = noteSizes.height + noteMargin
-                return { ...currentArray[index] }
-            }
-
-            if (currentBoundaries.x >= boardSizes.width) {
-                console.error("Too many notes!")
                 return { ...currentArray[index] }
             }
 
@@ -294,8 +309,35 @@ const StickyBoard = () => {
 
         addMemoryState(updatedNotes)
         stickyNotesSet(updatedNotes)
+
+        toast('Notes arranged!', { icon: "📋" })
     }
 
+    async function checkForChangelog() {
+        const storedVersion = localStorage.getItem("app-version") ?? undefined
+        const currentVersion = PackageJSON.version
+
+        if (storedVersion !== currentVersion) {
+            const changelog: { versions: ChangelogVersionType[] } = await (await fetch('/changelog.json')).json();
+            const currentChangelog = changelog.versions.find(({ version }) => version === currentVersion)
+            if (!currentChangelog) throw new Error("No changelog found for this version")
+
+            changelogContentSet(currentChangelog)
+        }
+    }
+
+    useEffect(() => {
+        if (changelogContent) {
+            changelogShowSet(true)
+        }
+    }, [changelogContent])
+
+    useEffect(() => { checkForChangelog() }, [])
+
+    useEffect(() => {
+        localStorage.setItem("board-options", JSON.stringify(boardOptions))
+        console.log("Saved board options!")
+    }, [boardOptions])
 
     return (
         <>
@@ -309,9 +351,32 @@ const StickyBoard = () => {
                 {(state) => (
                     <Modal
                         title="Clearing board"
-                        content="Are you sure you want to clear the board?"
+                        content={<p>Are you sure you want to clear the board?</p>}
                         confirm={{ text: "Cancel", onClick: () => { clearConfirmationSet(false) } }}
                         cancel={{ text: "Clear", onClick: () => { clearBoard(); clearConfirmationSet(false) } }}
+                        className={"modal-transition-" + state}
+                    />
+                )}
+            </Transition>
+
+            <Transition in={changelogShow} timeout={290} mountOnEnter unmountOnExit>
+                {(state) => (
+                    <Modal
+                        title={`Version ${changelogContent?.version} came out!`}
+                        content={
+                            <div className="changelog">
+                                <img src="version2.png" width={"500"} style={{ objectFit: "cover" }} alt={changelogContent?.version} />
+                                <p>{changelogContent?.description}</p>
+                                <ul>
+                                    {changelogContent?.changes.map((ch) => {
+                                        return (
+                                            <li>{ch}</li>
+                                        )
+                                    })}
+                                </ul>
+                            </div>
+                        }
+                        confirm={{ text: "Okay", onClick: () => { localStorage.setItem("app-version", PackageJSON.version); changelogShowSet(false) } }}
                         className={"modal-transition-" + state}
                     />
                 )}
@@ -320,10 +385,26 @@ const StickyBoard = () => {
                 <div className="action__menu">
                     <button onClick={() => addNote()} aria-label="Add note" title="Add note">+</button>
                     <button onClick={() => { clearConfirmationSet(true) }} className="cancel" aria-label="Clear the board" title="Clear the board"><Trash /></button>
-                    <button onClick={() => arrangeNotes()} aria-label="Align your notes" title="Align the notes"><AlignLeft /></button>
+                    <button onClick={() => arrangeNotes()} aria-label="Arrange your notes" title="Arrange the notes"><AlignLeft /></button>
+                    <Selectable aria-label="Options" title="Options" button={
+                        <>
+                            <Settings />
+                            <Badge content="NEW" />
+                        </>
+                    }>
+                        <div className="option">
+                            <p>Default note color</p>
+                            <div className="colors">
+                                {DefaultNoteColors.map((cl) => {
+                                    return (
+                                        <button className={cl} onClick={() => boardOptionsSet({ ...boardOptions, defaultNoteColor: cl })}>{boardOptions.defaultNoteColor === cl && <Check />}</button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </Selectable>
                 </div>
-                {/* <button onClick={revertToPreviousState}>undo</button>
-                <button onClick={redoForwardState}>redo</button> */}
+
                 <TransitionGroup className="notes">
                     {stickyNotes && stickyNotes.map(note => {
                         return (
@@ -333,7 +414,7 @@ const StickyBoard = () => {
                                         note={note}
                                         updateNote={updateNote}
                                         key={note.id}
-                                        className={`note-transition-${state}`}
+                                        className={`note-transition-${state} ${note.color}`}
                                         currentHighestZIndex={currentHighestZIndex}
                                         currentHighestZIndexSet={currentHighestZIndexSet}
                                     />
